@@ -2,26 +2,15 @@
 import axios from 'axios';
 import { BASE_URL } from '../config/constant';
 
-// Create an Axios instance
+// Create an Axios instance with headers for CORS support
 const api = axios.create({
   baseURL: 'https://spontaneous-figolla-0f6ed4.netlify.app', // Your API base URL
+  headers: {
+    'Content-Type': 'application/json', // Ensure the content type is set to JSON
+    'Access-Control-Allow-Origin': '*', // Allow all origins
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE', // Allow necessary HTTP methods
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization', // Allow necessary headers
+  },
 });
 
-// Add a request interceptor to include the token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-
-    if (token) {
-      config.headers['Access-Control-Allow-Origin'] = `*/*`;
-    }
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
 export default api;
-
