@@ -135,8 +135,8 @@ const Signin1 = () => {
           <Card.Body>
             <div className="text-center mb-4">
               <img src={logo} alt="Company Logo" style={{ width: '80px' }} />
-              <h3 className="mt-3" style={{ fontWeight: 'bold', fontFamily: 'Arial, sans-serif', color: '#6495ed' }}>iNext</h3>
-              <h3 className="mt-8" style={{ fontFamily: 'Menlo' }}>iNextErp+ Software</h3>
+              <h3 className="mt-3" style={{ fontWeight: 'bold', fontFamily: 'Arial, sans-serif', color: '#6495ed' }}>iNextErp+</h3>
+              
             </div>
             <h3 className="text-left mb-4" style={{ fontFamily: 'Fira Code' }}>Login</h3>
 
