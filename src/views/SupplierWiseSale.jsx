@@ -59,8 +59,7 @@ const SupplierWiseSale = ({ reportData }) => {
   };
 
   return (
-    <div style={{ width: '80%', margin: '0 auto' }}>
-      <h3 className="text-center mb-4">Supplier Wise Sales</h3>
+    <div>
       <Bar data={chartData} options={chartOptions} />
     </div>
   );
