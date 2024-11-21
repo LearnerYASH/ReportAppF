@@ -83,16 +83,7 @@ const routes = [
         path: '/Article',
         element: lazy(() => import('./views/Article'))
       },
-      {
-        exact: 'true',
-        path: '/reports/01. Company Total Sale',
-        element: lazy(() => import('./views/CompanyTotalSales'))
-      },
-      {
-        exact: 'true',
-        path: '/reports/02. Sale Trend of Company',
-        element: lazy(() => import('./views/WeeklySaleTrend'))
-      },
+     
       {
         exact: 'true',
         path: '/Settings',
