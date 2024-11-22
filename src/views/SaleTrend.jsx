@@ -3,8 +3,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { useLocation } from 'react-router-dom';
 
 const SaleTrend = () => {
-    const location = useLocation();
-  const reportData = location.state?.reportData || [];
+   
+  const location = useLocation(); // Access the location object
+  const { reportData } = location.state || {}; // Extract reportData from state
+
+  if (!reportData || reportData.length === 0) {
+    return <div>No data available for this report.</div>; // Handle no data scenario
+  }
   // Process data to separate "This Week" and "Last Week"
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   

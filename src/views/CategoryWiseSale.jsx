@@ -9,11 +9,18 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { useLocation } from 'react-router-dom';
 
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const CatagoryWiseSale = ({ reportData }) => {
+const CatagoryWiseSale = () => {
+  const location = useLocation(); // Access the location object
+  const { reportData } = location.state || {}; // Extract reportData from state
+
+  if (!reportData || reportData.length === 0) {
+    return <div>No data available for this report.</div>; // Handle no data scenario
+  }
   // Prepare data for the chart
   const labels = reportData.map((item) => item.ColLabel); // Category names
   const dataValues = reportData.map((item) => item.ExtNetAmount); // Amounts

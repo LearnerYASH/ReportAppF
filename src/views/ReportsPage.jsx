@@ -1,126 +1,142 @@
-import React, { useEffect, useState } from 'react';
-import { Row, Col, Card } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { ListGroup, Modal, Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import api from './api';
-import CompanyTotalSales from './CompanyTotalSales';
-import SaleTrend from './SaleTrend';
-import SaleByPaymentMode from './SaleByPaymentMode';
-import BranchSale from './BranchSale';
-import TotalCustomerServed from './TotalCustomerServed';
-import CategoryWiseSale from './CategoryWiseSale';
-import SalesPersonWiseSale from './SalesPersonWiseSale';
-import SupplierWiseSale from './SupplierWiseSale';
-import AverageBasketSale from './AverageBasketSale';
-import SaleROIReport from './SaleROIReport';
+import { Row, Col, Card } from 'react-bootstrap';
 
-const ReportsPage = ({ reportGroup, fromDate, toDate, branchId }) => {
+const ReportsPage = ({ reportGroup }) => {
   const [reports, setReports] = useState([]);
-  const [reportDataMap, setReportDataMap] = useState({});
-  const [selectedReport, setSelectedReport] = useState(null); // Track which report is expanded
+  const [showModal, setShowModal] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [fromDate, setFromDate] = useState('2024-04-01');
+  const [toDate, setToDate] = useState('2024-11-04');
+  const [branchId, setBranchId] = useState('S01');
+  const navigate = useNavigate();
 
-  // Fetch available reports for the group
+  // Fetch reports for the group
   useEffect(() => {
     const fetchReports = async () => {
       try {
         const response = await api.get(`/reports/reports?group=${reportGroup}`);
         setReports(response.data);
       } catch (error) {
-        console.error(`Error fetching ${reportGroup} reports:`, error);
+        console.error('Error fetching reports:', error);
       }
     };
+
     fetchReports();
   }, [reportGroup]);
 
-  // Automatically execute each report’s stored procedure and store the results
-  useEffect(() => {
-    const executeReports = async () => {
-      const dbConfig = {
-        serverIp: localStorage.getItem('serverIp'),
-        sqlPort: localStorage.getItem('sqlPort'),
-        sqlUserId: localStorage.getItem('sqlUserId'),
-        sqlPwd: localStorage.getItem('sqlPwd'),
-        clientDbName: localStorage.getItem('clientDbName'),
-      };
+  // Handle report selection and modal display
+  const handleReportClick = (report) => {
+    setSelectedReport(report);
+    setShowModal(true);
+  };
 
-      for (const report of reports) {
-        try {
-          const response = await api.post('/reports/execute', {
-            procedureName: report.ProcedureName,
-            reportId: report.ReportId,
-            fromDate,
-            toDate,
-            branchId,
-            dbConfig,
-          });
+  // Execute the report and navigate to its page
+  const handleExecuteReport = async () => {
+    if (!fromDate || !toDate || !branchId) {
+      alert('Please fill in all fields.');
+      return;
+    }
 
-          // Update the report data map with the response data
-          setReportDataMap((prevData) => ({
-            ...prevData,
-            [report.ReportName]: response.data,
-          }));
-        } catch (error) {
-          console.error(`Error executing report ${report.ReportName}:`, error);
-        }
-      }
+    const dbConfig = {
+      serverIp: localStorage.getItem('serverIp'),
+      sqlPort: localStorage.getItem('sqlPort'),
+      sqlUserId: localStorage.getItem('sqlUserId'),
+      sqlPwd: localStorage.getItem('sqlPwd'),
+      clientDbName: localStorage.getItem('clientDbName'),
     };
 
-    if (reports.length > 0) {
-      executeReports();
-    }
-  }, [reports, fromDate, toDate, branchId]);
+    try {
+      const response = await api.post('/reports/execute', {
+        procedureName: selectedReport.ProcedureName,
+        reportId: selectedReport.ReportId,
+        fromDate,
+        toDate,
+        branchId,
+        dbConfig,
+      });
 
-  // Function to toggle report visibility
-  const toggleReport = (reportName) => {
-    setSelectedReport(selectedReport === reportName ? null : reportName);
+      // Navigate to the report-specific component with data
+      navigate(`/${selectedReport.ReportName.slice(3).trim().replace(/\s+/g, '')}`, {
+        state: { reportData: response.data },
+      });
+    } catch (error) {
+      console.error('Error executing report:', error);
+    }
+
+    setShowModal(false); // Close the modal
   };
 
   return (
-    <React.Fragment>
-      {reports.map((report) => (
-        <Row key={report.ReportId} className="my-4">
-          <Col md={1} lg={12}>
-            <Card>
-              <Card.Header onClick={() => toggleReport(report.ReportName)} style={{ cursor: 'pointer' }}>
-                <Card.Title as="h5">{report.ReportName}</Card.Title>
-              </Card.Header>
-              {selectedReport === report.ReportName && (
-                <Card.Body>
-                  {report.ReportName === '01. Company Total Sale' && reportDataMap[report.ReportName] && (
-                    <CompanyTotalSales reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '02. Sale Trend of Company' && reportDataMap[report.ReportName] && (
-                    <SaleTrend reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '03. Sale by Payment Mode' && reportDataMap[report.ReportName] && (
-                    <SaleByPaymentMode reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '04. Branch Sale' && reportDataMap[report.ReportName] && (
-                    <BranchSale reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '05. Total Customer Served' && reportDataMap[report.ReportName] && (
-                    <TotalCustomerServed reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '06. Category Wise Sale' && reportDataMap[report.ReportName] && (
-                    <CategoryWiseSale reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '07. Sale Person Wise Sale' && reportDataMap[report.ReportName] && (
-                    <SalesPersonWiseSale reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '08. Supplier Wise Sale' && reportDataMap[report.ReportName] && (
-                    <SupplierWiseSale reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '09. Average Basket Sale' && reportDataMap[report.ReportName] && (
-                    <AverageBasketSale reportData={reportDataMap[report.ReportName]} />
-                  )}
-                  {report.ReportName === '10. Sale-ROI Report' && reportDataMap[report.ReportName] && (
-                    <SaleROIReport reportData={reportDataMap[report.ReportName]} />
-                  )}
-                </Card.Body>
-              )}
-            </Card>
-          </Col>
-        </Row>
-      ))}
-    </React.Fragment>
+    <div>
+    <Card className="shadow-sm w-100">
+  <Card.Header>
+  <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
+  Point Of Sale Reports
+</Card.Title>
+  </Card.Header>
+  <Card.Body className="d-flex flex-column h-100 p-0">
+  <ListGroup className="h-100">
+  {reports.map((report) => (
+    <ListGroup.Item
+      key={report.ReportId}
+      action
+      onClick={() => handleReportClick(report)}
+      className="py-3" // Adjust padding
+      style={{ fontSize: '1.0rem', color: '#4f4f4f' }} // Set font color to #4f4f4f
+    >
+      {report.ReportName}
+    </ListGroup.Item>
+  ))}
+</ListGroup>
+
+  </Card.Body>
+</Card>
+    {/* Modal for input parameters */}
+    <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Execute {selectedReport?.ReportName}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group controlId="fromDate">
+            <Form.Label>From Date</Form.Label>
+            <Form.Control
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group controlId="toDate" className="mt-3">
+            <Form.Label>To Date</Form.Label>
+            <Form.Control
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group controlId="branchId" className="mt-3">
+            <Form.Label>Branch ID</Form.Label>
+            <Form.Control
+              type="text"
+              value={branchId}
+              onChange={(e) => setBranchId(e.target.value)}
+            />
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => setShowModal(false)}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={handleExecuteReport}>
+          Execute Report
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  </div>
   );
 };
 

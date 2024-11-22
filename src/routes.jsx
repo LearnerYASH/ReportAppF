@@ -90,6 +90,56 @@ const routes = [
         element: lazy(() => import('./views/Settings'))
       },
       {
+        exact: 'true',
+        path: '/CompanyTotalSale',
+        element: lazy(() => import('./views/CompanyTotalSales'))
+      },
+      {
+        exact: 'true',
+        path: '/SaleTrendofCompany',
+        element: lazy(() => import('./views/SaleTrend'))
+      },
+      {
+        exact: 'true',
+        path: '/SalebyPaymentMode',
+        element: lazy(() => import('./views/SaleByPaymentMode'))
+      },
+      {
+        exact: 'true',
+        path: '/BranchSale',
+        element: lazy(() => import('./views/BranchSale'))
+      },
+      {
+        exact: 'true',
+        path: '/TotalCustomerServed',
+        element: lazy(() => import('./views/TotalCustomerServed'))
+      },
+      {
+        exact: 'true',
+        path: '/CategoryWiseSale',
+        element: lazy(() => import('./views/CategoryWiseSale'))
+      },
+      {
+        exact: 'true',
+        path: '/SalePersonWiseSale',
+        element: lazy(() => import('./views/SalesPersonWiseSale'))
+      },
+      {
+        exact: 'true',
+        path: '/SupplierWiseSale',
+        element: lazy(() => import('./views/SupplierWiseSale'))
+      },
+      {
+        exact: 'true',
+        path: '/AverageBasketSale',
+        element: lazy(() => import('./views/AverageBasketSale'))
+      },
+      {
+        exact: 'true',
+        path: '/Sale-ROIReport',
+        element: lazy(() => import('./views/SaleROIReport'))
+      },
+      {
         path: '*',
         exact: 'true',
         element: () => <Navigate to={BASE_URL} />

@@ -1,22 +1,15 @@
 import React from 'react';
 import { Card, Col } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 
-const SaleByPaymentMode = ({ reportData }) => {
-  const data = reportData || [
-    {
-      ColLabel: 'My Testing Pvt. Ltd.',
-      CashAmount: 32087.0,
-      ChqAmount: 0.0,
-      CreditAmount: 0.0,
-      CreditCardAmount: 0.0,
-      CreditNoteAdjAmount: 0.0,
-      CreditNoteIsuAmount: 0.0,
-      CreditRefundAmount: 0.0,
-      DiscountCouponAmount: 0.0,
-      GiftVoucherAmount: 0.0,
-    },
-  ];
+const SaleByPaymentMode = () => {
+  const location = useLocation(); // Access the location object
+  const { reportData } = location.state || {}; // Extract reportData from state
 
+  if (!reportData || reportData.length === 0) {
+    return <div>No data available for this report.</div>; // Handle no data scenario
+  }
+  const data = reportData;
   return (
     <div className="container">
       <div className="row g-3">

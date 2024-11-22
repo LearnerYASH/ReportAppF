@@ -10,13 +10,19 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { useLocation } from 'react-router-dom';
 
 // Register necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const SalesPersonWiseSale = ({ reportData }) => {
+const SalesPersonWiseSale = () => {
   
-  
+  const location = useLocation(); // Access the location object
+  const { reportData } = location.state || {}; // Extract reportData from state
+
+  if (!reportData || reportData.length === 0) {
+    return <div>No data available for this report.</div>; // Handle no data scenario
+  }
 
   const data = reportData;
 

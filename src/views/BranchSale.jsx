@@ -1,7 +1,14 @@
 import React from 'react';
 import { Card, CardBody, Col } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 
-const BranchSale = ({ reportData }) => {
+const BranchSale = () => {
+  const location = useLocation(); // Access the location object
+  const { reportData } = location.state || {}; // Extract reportData from state
+
+  if (!reportData || reportData.length === 0) {
+    return <div>No data available for this report.</div>; // Handle no data scenario
+  }
   const data = reportData;
 
   return (

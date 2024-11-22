@@ -55,7 +55,7 @@ const AdminLayout = ({ children }) => {
         <div className={mainClass.join(' ')}>
           <div className="pcoded-content">
             <div className="pcoded-inner-content">
-              <Breadcrumb />
+              {/* <Breadcrumb /> */}
               {children}
             </div>
           </div>
