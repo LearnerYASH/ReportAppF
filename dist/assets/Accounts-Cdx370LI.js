@@ -1,1 +1,0 @@
-import{j as o}from"./index-vf9rJf0z.js";import{R as r}from"./ReportsPage-CXhLGuO2.js";import"./api-9D3PyfUE.js";import"./Form-CQ6Zswsb.js";import"./Col-dhufSHD2.js";const i=()=>o.jsx(r,{reportGroup:"Accounts"});export{i as default};

@@ -1,1 +1,0 @@
-import{j as r}from"./index-vf9rJf0z.js";import{R as o}from"./ReportsPage-CXhLGuO2.js";import"./api-9D3PyfUE.js";import"./Form-CQ6Zswsb.js";import"./Col-dhufSHD2.js";const i=()=>r.jsx(o,{reportGroup:"POS"});export{i as default};
