@@ -1,37 +1,46 @@
 import React from 'react';
-import { Card, Col } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 
 const CompanyTotalSales = () => {
-  const location = useLocation(); // Access the location object
-  const { reportData } = location.state || {}; // Extract reportData from state
+  const location = useLocation();
+  const { reportData } = location.state || {};
 
+  // Handle no data scenario
   if (!reportData || reportData.length === 0) {
-    return <div>No data available for this report.</div>; // Handle no data scenario
+    return <div>No data available for this report.</div>;
   }
 
   return (
     <div className="container">
       <div className="row g-3">
         {reportData.map((item, index) => (
-          <Col key={index} sm="12" md="6" lg="4">
-            <Card className="h-100 shadow-sm">
+          <div key={index} className="col-12 col-md-6 col-lg-4">
+            <Card
+              className="text-center h-100 shadow-sm"
+              style={{
+                backgroundColor: '#9ACEEB', // Cornflower Blue background
+                color: '#fff', // White text color
+                borderRadius: '10px',
+              }}
+            >
               <Card.Body>
-                <div
-                  className="mt-3"
-                  style={{ fontSize: '1.2rem' }} // Increased font size
+                <h5 style={{ color: '#fff', fontWeight: 'bold' }}>Total Sales</h5>
+                <h2 style={{ fontSize: '2rem', color: '#fff' }}>
+                  ₹ {item.ExtNetAmount.toFixed(2)}
+                </h2>
+                <p
+                  style={{
+                    fontSize: '1.2rem',
+                    marginTop: '20px',
+                    textAlign: 'right', // Align QTY to the right
+                  }}
                 >
-                  <strong>Quantity:</strong> {item.Quantity}
-                </div>
-                <div
-                  className="mt-2 text-success"
-                  style={{ fontSize: '1.2rem' }} // Increased font size
-                >
-                  <strong>Amount:</strong> ₹{item.ExtNetAmount.toFixed(2)}
-                </div>
+                  QTY: {item.Quantity}
+                </p>
               </Card.Body>
             </Card>
-          </Col>
+          </div>
         ))}
       </div>
     </div>

@@ -1,45 +1,89 @@
 import React from 'react';
-import { Card, CardBody, Col } from 'react-bootstrap';
+import { Card, Col } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+import { PieChart } from '@mui/x-charts/PieChart';
 
 const BranchSale = () => {
-  const location = useLocation(); // Access the location object
-  const { reportData } = location.state || {}; // Extract reportData from state
+  const location = useLocation();
+  const { reportData } = location.state || {};
 
+  // Handle no data scenario
   if (!reportData || reportData.length === 0) {
-    return <div>No data available for this report.</div>; // Handle no data scenario
+    return <div>No data available for this report.</div>;
   }
-  const data = reportData;
+
+  // Format data for the PieChart to compare amounts
+  const pieData = reportData.map((item, index) => ({
+    id: item.ColLabel,
+    value: item.ExtNetAmount || 0, // Ensure value is always a number
+    label: item.ColLabel,
+    color: `hsl(${index * 45}, 70%, 50%)`, // Assign distinct colors to each branch
+  }));
 
   return (
     <div className="container">
       <div className="row g-3">
-        {data.map((item, index) => (
-          <Col key={index} sm="12" md="6" lg="4">
-            <Card className="h-100 shadow-sm">
-              <CardBody>
-                <h5
-                  className="card-title text-primary"
-                  style={{ fontSize: '1.5rem' }} // Increased font size
-                >
-                  {item.ColLabel}
-                </h5>
-                <div
-                  className="mt-3"
-                  style={{ fontSize: '1.2rem' }} // Increased font size
-                >
-                  <strong>Quantity:</strong> {item.Quantity}
-                </div>
-                <div
-                  className="mt-2 text-success"
-                  style={{ fontSize: '1.2rem' }} // Increased font size
-                >
-                  <strong>Amount:</strong> ₹{item.ExtNetAmount.toFixed(2)}
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-        ))}
+        <Col sm="12">
+          <Card className="h-100 shadow-sm">
+            {/* Card Header */}
+            <Card.Header
+              className="text-center"
+              style={{ color: '#9ACEEB', fontSize: '1.5rem' }}
+            >
+              Branch Wise Sale
+            </Card.Header>
+
+            {/* Card Body */}
+            <Card.Body>
+              <PieChart
+                series={[
+                  {
+                    data: pieData.map(({ id, value }) => ({ id, value })), // Only pass id and value to the PieChart
+                    highlightScope: { fade: 'global', highlight: 'item' },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -30,
+                      color: 'gray',
+                    },
+                  },
+                ]}
+                height={300} // Adjust height for better visualization
+              />
+            </Card.Body>
+
+            {/* Card Footer */}
+            <Card.Footer>
+              <ul className="list-group list-group-flush">
+                {pieData.map((item, index) => (
+                  <li
+                    key={index}
+                    className="d-flex justify-content-between align-items-center"
+                    style={{
+                      fontSize: '1rem',
+                      padding: '5px 0',
+                      borderBottom: '1px solid #ddd',
+                    }}
+                  >
+                    {/* Color Indicator */}
+                    <span
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        backgroundColor: item.color,
+                        display: 'inline-block',
+                        marginRight: '10px',
+                      }}
+                    ></span>
+                    {/* Branch Name */}
+                    <span style={{ flex: 1 }}>{item.label}</span>
+                    {/* Amount */}
+                    <span>₹{item.value.toFixed(2)}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card.Footer>
+          </Card>
+        </Col>
       </div>
     </div>
   );
