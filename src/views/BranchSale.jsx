@@ -26,11 +26,10 @@ const BranchSale = () => {
         <Col sm="12">
           <Card className="h-100 shadow-sm">
             {/* Card Header */}
-            <Card.Header
-              className="text-center"
-              style={{ color: '#9ACEEB', fontSize: '1.5rem' }}
-            >
-              Branch Wise Sale
+            <Card.Header >
+            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
+             Branch Wise Sale
+            </Card.Title>
             </Card.Header>
 
             {/* Card Body */}
