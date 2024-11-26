@@ -31,17 +31,17 @@ const SupplierWiseSale = () => {
     <div className="container">
       <Col sm="12">
         <Card className="h-100 shadow-sm">
-        <Card.Header>
-            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
-              <div
-                className="d-flex align-items-center"
-                style={{ gap: '0' }} // Add spacing between arrow and text
-              >
-                <BackButton />
-                <span>Supplier Wise Sale</span>
-              </div>
-            </Card.Title>
-          </Card.Header>
+        <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
+  <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+    <div
+      className="d-flex align-items-center"
+      style={{ gap: '8px' }} // Add spacing between the arrow and text
+    >
+      <BackButton />
+      <span>Supplier Wise Sale</span>
+    </div>
+  </Card.Title>
+</Card.Header>
 
           {/* Card Body */}
           <Card.Body>

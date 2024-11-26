@@ -72,11 +72,12 @@ const ReportsPage = ({ reportGroup }) => {
   return (
     <div>
     <Card className="shadow-sm w-100">
-  <Card.Header>
-  <Card.Title as="h5" style={{ color: '#4f4f4f', fontWeight: 'bold', fontSize: '1.2rem' }}>
-  Point Of Sale Reports
-</Card.Title>
-  </Card.Header>
+    <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
+  <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '1.2rem' }}>
+    Point Of Sale Reports
+  </Card.Title>
+</Card.Header>
+
   <Card.Body className="d-flex flex-column h-100 p-0">
   <ListGroup className="h-100">
   {reports.map((report) => (

@@ -32,11 +32,12 @@ const TotalCustomerServed = () => {
       <Col sm="12">
         <Card className="h-100 shadow-sm">
           {/* Card Header */}
-          <Card.Header>
-            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
-              Total Customers Served
-            </Card.Title>
-          </Card.Header>
+          <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
+  <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+    Total Customers Served
+  </Card.Title>
+</Card.Header>
+
 
           {/* Card Body */}
           <Card.Body>

@@ -17,12 +17,13 @@ const AverageBasketSale = () => {
       <Col sm="12">
         <Card className="shadow-sm">
           {/* Card Header */}
-          <Card.Header>
-            <Card.Title as="h5" style={{ display: 'flex', alignItems: 'center', color: '#4f4f4f' }}>
-              <BackButton />
-              <span style={{ marginLeft: '8px' }}>Average Basket Sale</span>
-            </Card.Title>
-          </Card.Header>
+          <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
+  <Card.Title as="h5" style={{ display: 'flex', alignItems: 'center', color: '#FFFFFF', fontWeight: 'bold' }}>
+    <BackButton />
+    <span style={{ marginLeft: '8px' }}>Average Basket Sale</span>
+  </Card.Title>
+</Card.Header>
+
 
           {/* Card Body */}
           <Card.Body>

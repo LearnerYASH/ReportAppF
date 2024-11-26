@@ -17,12 +17,13 @@ const CompanyTotalSales = () => {
       <Col sm="12">
         <Card className="shadow-sm">
           {/* Card Header */}
-          <Card.Header>
-            <Card.Title as="h5" style={{ display: 'flex', alignItems: 'center', color: '#4f4f4f' }}>
-              <BackButton />
-              <span style={{ marginLeft: '8px' }}>Company Total Sales</span>
-            </Card.Title>
-          </Card.Header>
+          <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
+  <Card.Title as="h5" style={{ display: 'flex', alignItems: 'center', color: '#FFFFFF' }}>
+    <BackButton />
+    <span style={{ marginLeft: '8px' }}>Company Total Sales</span>
+  </Card.Title>
+</Card.Header>
+
 
           {/* Card Body */}
           <Card.Body>
