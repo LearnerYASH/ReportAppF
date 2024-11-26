@@ -17,7 +17,7 @@ const menuItems = {
           id: 'Point of Sale',
           title: 'Point of Sale',
           type: 'item',
-          icon: 'feather icon-box',
+          icon: 'feather icon-slack',
           url: '/pos'
           
         },
@@ -26,7 +26,7 @@ const menuItems = {
           id: 'Inventory',
           title: 'Inventory',
           type: 'item',
-          icon: 'feather icon-box',
+          icon: 'feather icon-package',
           url: '/Inventory'
           
         },
@@ -34,7 +34,7 @@ const menuItems = {
           id: 'Accounts',
           title: 'Accounts',
           type: 'item',
-          icon: 'feather icon-box',
+          icon: 'feather icon-layers',
           url: '/Accounts'
           
         },
@@ -42,7 +42,7 @@ const menuItems = {
           id: 'Production',
           title: 'Production',
           type: 'item',
-          icon: 'feather icon-box',
+          icon: 'feather icon-aperture',
           url: '/Production'
           
         },
@@ -51,7 +51,7 @@ const menuItems = {
           id: 'Article Search',
           title: 'Article Search',
           type: 'item',
-          icon: 'feather icon-box',
+          icon: 'feather icon-search',
           url: '/Article'
           
         },
@@ -59,22 +59,18 @@ const menuItems = {
           id: 'Settings',
           title: 'Settings',
           type: 'item',
-          icon: 'feather icon-box',
+          icon: 'feather icon-settings',
           url: '/Settings'
         },
         {
           id: 'Logout',
           title: 'Logout',
           type: 'item',
-          icon: 'feather icon-box',
+          icon: 'feather icon-log-out',
           url: '/Logout'
-          
         }
       ]
     },
-    
-    
-    
   ]
 };
 

@@ -73,7 +73,7 @@ const ReportsPage = ({ reportGroup }) => {
     <div>
     <Card className="shadow-sm w-100">
   <Card.Header>
-  <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
+  <Card.Title as="h5" style={{ color: '#4f4f4f', fontWeight: 'bold', fontSize: '1.2rem' }}>
   Point Of Sale Reports
 </Card.Title>
   </Card.Header>
