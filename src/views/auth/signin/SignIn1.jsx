@@ -12,40 +12,39 @@ const Signin1 = () => {
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleLogin = async (emailid, userpwd) => {
-      try {
-          console.log(emailid, userpwd);
-          const response = await api.post('/auth/login', { emailid, userpwd });
-          if (response.data.success) {
-              // Save the token, customerId, and additional details in localStorage
-              localStorage.setItem('token', response.data.token);
-              localStorage.setItem('tokenExpiration', response.data.tokenExpiration);
-              localStorage.setItem('customerId', response.data.customerId);
-              localStorage.setItem('UserName', response.data.UserName);
-              localStorage.setItem('serverIp', response.data.serverIp);
-              localStorage.setItem('sqlPort', response.data.sqlPort);
-              localStorage.setItem('sqlUserId', response.data.sqlUserId);
-              localStorage.setItem('sqlPwd', response.data.sqlPwd);
-              localStorage.setItem('clientDbName', response.data.clientDbName);
-              console.log('Token:', response.data.token);
-              console.log('tokenExpiration:', response.data.tokenExpiration);
-              console.log('CustomerId:', response.data.customerId);
-              console.log('UserName:', response.data.UserName);
-              console.log('Server IP:', response.data.serverIp);
-              console.log('SQL Port:', response.data.sqlPort);
-              console.log('SQL User ID:', response.data.sqlUserId);
-              console.log('SQL Password:', response.data.sqlPwd);
-              console.log('Client Database Name:', response.data.clientDbName);
-              
-              navigate('/verify');
-          } else {
-              setLoginError('Login failed. Please check your credentials.');
-          }
-      } catch (error) {
-          console.error('Login error:', error);
-          setLoginError('An error occurred during login. Please try again.');
-      }
-  };
+    console.time("Login Time");
+    try {
+        setIsSubmitting(true);  // Disable login button
+        const response = await api.post('/auth/login', { emailid, userpwd });
+        
+        if (response.data.success) {
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('tokenExpiration', response.data.tokenExpiration);
+            localStorage.setItem('customerId', response.data.customerId);
+            localStorage.setItem('UserName', response.data.UserName);
+            localStorage.setItem('serverIp', response.data.serverIp);
+            localStorage.setItem('sqlPort', response.data.sqlPort);
+            localStorage.setItem('sqlUserId', response.data.sqlUserId);
+            localStorage.setItem('sqlPwd', response.data.sqlPwd);
+            localStorage.setItem('clientDbName', response.data.clientDbName);
+            navigate('/verify');
+        } else {
+            setLoginError('Login failed. Please check your credentials.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        setLoginError('An error occurred during login. Please try again.');
+    } finally {
+        console.timeEnd("Login Time");
+        setIsSubmitting(false);  // Re-enable the login button
+    }
+};
+
+
+
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -143,15 +142,22 @@ const Signin1 = () => {
                 </Form.Group>
 
                 <Form.Group controlId="formPassword" className="mb-4">
-                  <Form.Control
-                    type="password"
-                    placeholder="Enter Password"
-                    size="lg"
-                    value={userpwd}
-                    onChange={(e) => setUserpwd(e.target.value)}
-                    required
-                  />
-                </Form.Group>
+    <Form.Control
+        type="password"
+        placeholder="Enter Password"
+        size="lg"
+        value={userpwd}
+        onChange={(e) => setUserpwd(e.target.value)}
+        required
+    />
+    {isSubmitting && (
+        <div className="d-flex justify-content-center">
+            <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    )}
+</Form.Group>
 
                 {loginError && <div className="text-danger mb-3">{loginError}</div>}
 
@@ -165,15 +171,17 @@ const Signin1 = () => {
                 </div>
 
                 <div className="text-center text-lg-start mt-4 pt-2">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    className="px-5"
-                    style={{  fontFamily: 'Titillium Web, sans-serif', backgroundColor: '#6495ed', borderColor: '#6495ed' }}
-                  >
-                    Login
-                  </Button>
+                <Button
+    type="submit"
+    variant="primary"
+    size="lg"
+    className="px-5"
+    style={{ fontFamily: 'Titillium Web, sans-serif', backgroundColor: '#6495ed', borderColor: '#6495ed' }}
+    disabled={isSubmitting}  // Disable button while submitting
+>
+    {isSubmitting ? 'Logging in...' : 'Login'}
+</Button>
+
                   <p className="small fw-bold mt-2 pt-1 mb-0">
                     Don’t have an account?{' '}
                     <NavLink to="/auth/signup-1" className="link-danger">
