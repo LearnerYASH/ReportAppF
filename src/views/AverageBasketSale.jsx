@@ -1,30 +1,46 @@
 import React from 'react';
-import { Card, CardBody, Col } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 
 const AverageBasketSale = () => {
   const location = useLocation(); // Access the location object
   const { reportData } = location.state || {}; // Extract reportData from state
 
+  // Handle no data scenario
   if (!reportData || reportData.length === 0) {
-    return <div>No data available for this report.</div>; // Handle no data scenario
+    return <div>No data available for this report.</div>;
   }
-  
+
   return (
     <div className="container">
       <div className="row g-3">
         {reportData.map((item, index) => (
-          <Col key={index} sm="12" md="6" lg="4">
-            <Card className="h-100 shadow-sm">
-              <CardBody>
-                
-                <div className="mt-3" style={{ fontSize: '1.5rem' }}>
-                  <strong>Average Basket Sale:</strong> ₹
-                  {(item["(No column name)"] && item.BasketSize) ? (item["(No column name)"] / item.BasketSize).toFixed(2) : '0.00'}
-                </div>
-              </CardBody>
+          <div key={index} className="col-12 col-md-6 col-lg-4">
+            <Card
+              className="text-center h-100 shadow-sm"
+              style={{
+                backgroundColor: '#9ACEEB', // Cornflower Blue background
+                color: '#fff', // White text color
+                borderRadius: '10px',
+              }}
+            >
+              <Card.Body>
+                <h5 style={{ color: '#fff', fontWeight: 'bold' }}>Average Basket Sale</h5>
+                <h2 style={{ fontSize: '2rem', color: '#fff' }}>
+                  ₹ {item.BasketSize.toFixed(2)} {/* Display BasketSize */}
+                </h2>
+                <p
+                  style={{
+                    fontSize: '1.2rem',
+                    marginTop: '20px',
+                    textAlign: 'right', // Align additional details to the right
+                  }}
+                >
+                  {/* Optional additional details (if needed) */}
+                </p>
+              </Card.Body>
             </Card>
-          </Col>
+          </div>
         ))}
       </div>
     </div>
