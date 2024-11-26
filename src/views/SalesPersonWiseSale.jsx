@@ -1,22 +1,9 @@
-
 import React from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { PieChart } from '@mui/x-charts'; // Assuming @mui/x-charts is installed
 import { useLocation } from 'react-router-dom';
-
-// Register necessary Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import { Card, Col } from 'react-bootstrap'; // Using React-Bootstrap for the layout
 
 const SalesPersonWiseSale = () => {
-  
   const location = useLocation(); // Access the location object
   const { reportData } = location.state || {}; // Extract reportData from state
 
@@ -24,61 +11,132 @@ const SalesPersonWiseSale = () => {
     return <div>No data available for this report.</div>; // Handle no data scenario
   }
 
-  const data = reportData;
+  // Transform data for the PieChart
+  const transformedData = reportData.map((item) => ({
+    id: item.ColLabel, // Salesperson names as labels
+    label: item.ColLabel, // Labels for the legend and tooltip
+    value: item.ExtNetAmount, // Sales amount
+  }));
 
-  // Extract labels and values for the chart
-  const labels = data.map((item) => item.ColLabel); // Salesperson names
-  const dataValues = data.map((item) => item.ExtNetAmount); // Amounts
+  // Filter valid data (non-zero sales)
+  const validData = transformedData.filter((entry) => entry.value > 0);
 
-  // Chart data configuration
-  const chartData = {
-    labels: labels,
-    datasets: [
-      {
-        label: 'Sales Amount (₹)',
-        data: dataValues,
-        backgroundColor: 'rgba(54, 162, 235, 0.6)', // Bar color
-        borderColor: 'rgba(54, 162, 235, 1)', // Border color
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  // Chart options configuration
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Salesperson',
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Sales Amount (₹)',
-        },
-        beginAtZero: true,
-      },
-    },
-    barThickness: 80, // Fixed bar width
-    maxBarThickness: 90, // Maximum bar width
-  };
+  // Define color scheme for consistent visual appearance
+  const colors = validData.map(
+    (_, index) => `hsl(${(index * 45) % 360}, 70%, 50%)` // Generate unique colors
+  );
 
   return (
-    <div style={{ width: '80%', margin: '0 auto' }}>
-      
-      <Bar data={chartData} options={chartOptions} />
+    <div className="container">
+      <Col sm="12">
+        <Card className="h-100 shadow-sm">
+          {/* Card Header */}
+          <Card.Header>
+            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
+              Sale Person Wise Sale
+            </Card.Title>
+          </Card.Header>
+
+          {/* Card Body */}
+          <Card.Body>
+            <div style={{ height: '400px' }}>
+              <PieChart
+                series={[
+                  {
+                    data: validData.map(({ id, value }, index) => ({
+                      id,
+                      value,
+                      color: colors[index], // Apply synchronized colors
+                    })),
+                    highlightScope: { fade: 'global', highlight: 'item' },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -30,
+                      color: 'gray',
+                    },
+                    tooltip: {
+                      valueFormatter: (value, { id }) =>
+                        `${id}: ₹${value.toLocaleString()}`, // Tooltip with value formatting
+                    },
+                  },
+                ]}
+                height={300} // Adjust height for visualization
+              />
+            </div>
+          </Card.Body>
+
+          {/* Card Footer for Legend */}
+          <Card.Footer>
+            <div className="custom-legend">
+              {validData.map(({ label, value }, index) => (
+                <div key={index} className="legend-item">
+                  <div className="legend-row">
+                    <div
+                      className="legend-color"
+                      style={{
+                        backgroundColor: colors[index], // Match pie chart colors
+                        width: '15px',
+                        height: '15px',
+                        borderRadius: '50%',
+                        marginRight: '8px',
+                      }}
+                    ></div>
+                    <div className="legend-label">{label}</div>
+                    <div className="legend-value">₹{value.toLocaleString()}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card.Footer>
+        </Card>
+      </Col>
+
+      {/* CSS for Custom Legend */}
+      <style>
+        {`
+          .custom-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Spacing between items */
+          }
+
+          .legend-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #4f4f4f;
+          }
+
+          .legend-row {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+          }
+
+          .legend-label {
+            flex: 1; /* Push value to the right */
+            text-align: left;
+          }
+
+          .legend-value {
+            flex-shrink: 0;
+            text-align: right;
+          }
+        `}
+      </style>
     </div>
   );
 };
 
 export default SalesPersonWiseSale;
-

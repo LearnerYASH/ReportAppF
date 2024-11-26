@@ -12,9 +12,9 @@ const BranchSale = () => {
     return <div>No data available for this report.</div>;
   }
 
-  // Format data for the PieChart to compare amounts
+  // Generate consistent colors for both chart and legend
   const pieData = reportData.map((item, index) => ({
-    id: item.ColLabel,
+    id: index.toString(), // Ensure id starts from 0, 1, 2...
     value: item.ExtNetAmount || 0, // Ensure value is always a number
     label: item.ColLabel,
     color: `hsl(${index * 45}, 70%, 50%)`, // Assign distinct colors to each branch
@@ -26,10 +26,10 @@ const BranchSale = () => {
         <Col sm="12">
           <Card className="h-100 shadow-sm">
             {/* Card Header */}
-            <Card.Header >
-            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
-             Branch Wise Sale
-            </Card.Title>
+            <Card.Header>
+              <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
+                Branch Wise Sale
+              </Card.Title>
             </Card.Header>
 
             {/* Card Body */}
@@ -37,53 +37,97 @@ const BranchSale = () => {
               <PieChart
                 series={[
                   {
-                    data: pieData.map(({ id, value }) => ({ id, value })), // Only pass id and value to the PieChart
+                    data: pieData.map(({ id, value, color }) => ({
+                      id,
+                      value,
+                      color, // Pass colors explicitly to the chart
+                    })),
                     highlightScope: { fade: 'global', highlight: 'item' },
                     faded: {
                       innerRadius: 30,
                       additionalRadius: -30,
                       color: 'gray',
                     },
+                    tooltip: {
+                      valueFormatter: (value, { label }) =>
+                        `${label}: ${value.toLocaleString()}`, // Combine label + value
+                    },
                   },
                 ]}
                 height={300} // Adjust height for better visualization
+                slotProps={{
+                  legend: null, // Correctly disable the legend
+                }}
               />
             </Card.Body>
 
-            {/* Card Footer */}
+            {/* Card Footer for Custom Legend */}
             <Card.Footer>
-              <ul className="list-group list-group-flush">
-                {pieData.map((item, index) => (
-                  <li
-                    key={index}
-                    className="d-flex justify-content-between align-items-center"
-                    style={{
-                      fontSize: '1rem',
-                      padding: '5px 0',
-                      borderBottom: '1px solid #ddd',
-                    }}
-                  >
-                    {/* Color Indicator */}
-                    <span
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        backgroundColor: item.color,
-                        display: 'inline-block',
-                        marginRight: '10px',
-                      }}
-                    ></span>
-                    {/* Branch Name */}
-                    <span style={{ flex: 1 }}>{item.label}</span>
-                    {/* Amount */}
-                    <span>₹{item.value.toFixed(2)}</span>
-                  </li>
+              <div className="custom-legend">
+                {pieData.map(({ label, value, color }, index) => (
+                  <div key={index} className="legend-item">
+                    <div className="legend-row">
+                      <div
+                        className="legend-color"
+                        style={{
+                          backgroundColor: color, // Use the same color as pie slices
+                        }}
+                      ></div>
+                      <div className="legend-label">{label}</div>
+                      <div className="legend-value">₹{value.toLocaleString()}</div>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </Card.Footer>
           </Card>
         </Col>
       </div>
+
+      {/* CSS for the Custom Legend */}
+      <style>
+        {`
+          .custom-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Spacing between items */
+          }
+
+          .legend-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #4f4f4f;
+          }
+
+          .legend-row {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+          }
+
+          .legend-label {
+            flex: 1; /* Pushes the value to the right */
+            text-align: left;
+          }
+
+          .legend-value {
+            flex-shrink: 0;
+            text-align: right;
+          }
+        `}
+      </style>
     </div>
   );
 };

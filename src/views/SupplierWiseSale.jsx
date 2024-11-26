@@ -1,18 +1,7 @@
 import React from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { PieChart } from '@mui/x-charts'; // Assuming @mui/x-charts is installed
 import { useLocation } from 'react-router-dom';
-
-// Register necessary components for Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import { Card, Col } from 'react-bootstrap'; // Using React-Bootstrap for layout
 
 const SupplierWiseSale = () => {
   const location = useLocation(); // Access the location object
@@ -22,53 +11,130 @@ const SupplierWiseSale = () => {
     return <div>No data available for this report.</div>; // Handle no data scenario
   }
 
-  // Prepare data for the chart
-  const labels = reportData.map((item) => item.SupplierName); // Supplier names
-  const dataValues = reportData.map((item) => item.TotalSale); // Total sales amounts
+  // Transform data for PieChart
+  const transformedData = reportData.map((item) => ({
+    id: item.SupplierName, // Supplier names as IDs
+    label: item.SupplierName, // Labels for the legend and tooltip
+    value: item.TotalSale, // Total sales amount
+  }));
 
-  const chartData = {
-    labels: labels,
-    datasets: [
-      {
-        label: 'Total Sales Amount',
-        data: dataValues,
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
+  // Filter valid data (non-zero sales)
+  const validData = transformedData.filter((entry) => entry.value > 0);
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Suppliers',
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Total Sales Amount (₹)',
-        },
-        beginAtZero: true,
-      },
-    },
-    barThickness: 80, // Fixed bar width
-    maxBarThickness: 90, // Maximum bar width
-  };
+  // Define consistent colors for chart segments
+  const colors = validData.map(
+    (_, index) => `hsl(${(index * 45) % 360}, 70%, 50%)` // Generate unique colors
+  );
 
   return (
-    <div>
-      <Bar data={chartData} options={chartOptions} />
+    <div className="container">
+      <Col sm="12">
+        <Card className="h-100 shadow-sm">
+          {/* Card Header */}
+          <Card.Header>
+            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
+              Supplier Wise Sales
+            </Card.Title>
+          </Card.Header>
+
+          {/* Card Body */}
+          <Card.Body>
+            <div style={{ height: '400px' }}>
+              <PieChart
+                series={[
+                  {
+                    data: validData.map(({ id, value }, index) => ({
+                      id,
+                      value,
+                      color: colors[index], // Apply synchronized colors
+                    })),
+                    highlightScope: { fade: 'global', highlight: 'item' },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -30,
+                      color: 'gray',
+                    },
+                    tooltip: {
+                      valueFormatter: (value, { id }) =>
+                        `${id}: ₹${value.toLocaleString()}`, // Tooltip with formatted value
+                    },
+                  },
+                ]}
+                height={300} // Adjust height for visualization
+              />
+            </div>
+          </Card.Body>
+
+          {/* Card Footer for Legend */}
+          <Card.Footer>
+            <div className="custom-legend">
+              {validData.map(({ label, value }, index) => (
+                <div key={index} className="legend-item">
+                  <div className="legend-row">
+                    <div
+                      className="legend-color"
+                      style={{
+                        backgroundColor: colors[index], // Match pie chart colors
+                        width: '15px',
+                        height: '15px',
+                        borderRadius: '50%',
+                        marginRight: '8px',
+                      }}
+                    ></div>
+                    <div className="legend-label">{label}</div>
+                    <div className="legend-value">₹{value.toLocaleString()}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card.Footer>
+        </Card>
+      </Col>
+
+      {/* CSS for Custom Legend */}
+      <style>
+        {`
+          .custom-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Spacing between items */
+          }
+
+          .legend-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #4f4f4f;
+          }
+
+          .legend-row {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+          }
+
+          .legend-label {
+            flex: 1; /* Push value to the right */
+            text-align: left;
+          }
+
+          .legend-value {
+            flex-shrink: 0;
+            text-align: right;
+          }
+        `}
+      </style>
     </div>
   );
 };
