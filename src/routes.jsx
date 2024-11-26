@@ -140,6 +140,11 @@ const routes = [
         element: lazy(() => import('./views/SaleROIReport'))
       },
       {
+        exact: 'true',
+        path: '/Logout',
+        element: lazy(() => import('./views/Logout'))
+      },
+      {
         path: '*',
         exact: 'true',
         element: () => <Navigate to={BASE_URL} />

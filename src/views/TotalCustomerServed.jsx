@@ -2,6 +2,7 @@ import React from 'react';
 import { PieChart } from '@mui/x-charts'; // Assuming @mui/x-charts is installed
 import { useLocation } from 'react-router-dom';
 import { Card, Col } from 'react-bootstrap'; // Using React-Bootstrap for card layout
+import BackButton from './BackButton';
 
 const TotalCustomerServed = () => {
   const location = useLocation(); // Access the location object

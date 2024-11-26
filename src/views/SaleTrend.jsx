@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useLocation } from 'react-router-dom';
+import BackButton from './BackButton';
 
 const SaleTrend = () => {
    

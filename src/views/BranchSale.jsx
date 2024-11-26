@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Col } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { PieChart } from '@mui/x-charts/PieChart';
+import BackButton from './BackButton';
 
 const BranchSale = () => {
   const location = useLocation();
@@ -27,10 +28,16 @@ const BranchSale = () => {
           <Card className="h-100 shadow-sm">
             {/* Card Header */}
             <Card.Header>
-              <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
-                Branch Wise Sale
-              </Card.Title>
-            </Card.Header>
+            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
+              <div
+                className="d-flex align-items-center"
+                style={{ gap: '0' }} // Add spacing between arrow and text
+              >
+                <BackButton />
+                <span>Branch Wise Sale</span>
+              </div>
+            </Card.Title>
+          </Card.Header>
 
             {/* Card Body */}
             <Card.Body>

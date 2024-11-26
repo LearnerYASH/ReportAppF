@@ -61,6 +61,14 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-box',
           url: '/Settings'
+        },
+        {
+          id: 'Logout',
+          title: 'Logout',
+          type: 'item',
+          icon: 'feather icon-box',
+          url: '/Logout'
+          
         }
       ]
     },

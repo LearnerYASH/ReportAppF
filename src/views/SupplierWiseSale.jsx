@@ -2,6 +2,7 @@ import React from 'react';
 import { PieChart } from '@mui/x-charts'; // Assuming @mui/x-charts is installed
 import { useLocation } from 'react-router-dom';
 import { Card, Col } from 'react-bootstrap'; // Using React-Bootstrap for layout
+import BackButton from './BackButton';
 
 const SupplierWiseSale = () => {
   const location = useLocation(); // Access the location object
@@ -30,10 +31,15 @@ const SupplierWiseSale = () => {
     <div className="container">
       <Col sm="12">
         <Card className="h-100 shadow-sm">
-          {/* Card Header */}
-          <Card.Header>
+        <Card.Header>
             <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
-              Supplier Wise Sales
+              <div
+                className="d-flex align-items-center"
+                style={{ gap: '0' }} // Add spacing between arrow and text
+              >
+                <BackButton />
+                <span>Supplier Wise Sale</span>
+              </div>
             </Card.Title>
           </Card.Header>
 
