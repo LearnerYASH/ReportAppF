@@ -25,11 +25,7 @@ const Signin1 = () => {
             localStorage.setItem('tokenExpiration', response.data.tokenExpiration);
             localStorage.setItem('customerId', response.data.customerId);
             localStorage.setItem('UserName', response.data.UserName);
-            localStorage.setItem('serverIp', response.data.serverIp);
-            localStorage.setItem('sqlPort', response.data.sqlPort);
-            localStorage.setItem('sqlUserId', response.data.sqlUserId);
-            localStorage.setItem('sqlPwd', response.data.sqlPwd);
-            localStorage.setItem('clientDbName', response.data.clientDbName);
+            
             navigate('/verify');
         } else {
             setLoginError('Login failed. Please check your credentials.');

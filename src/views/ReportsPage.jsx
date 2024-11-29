@@ -3,6 +3,7 @@ import { ListGroup, Modal, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import api from './api';
 import { Row, Col, Card } from 'react-bootstrap';
+import { FaFileAlt, FaChartBar, FaCog } from 'react-icons/fa';
 
 const ReportsPage = ({ reportGroup }) => {
   const [reports, setReports] = useState([]);
@@ -80,18 +81,27 @@ const ReportsPage = ({ reportGroup }) => {
 
   <Card.Body className="d-flex flex-column h-100 p-0">
   <ListGroup className="h-100">
-  {reports.map((report) => (
-    <ListGroup.Item
-      key={report.ReportId}
-      action
-      onClick={() => handleReportClick(report)}
-      className="py-3" // Adjust padding
-      style={{ fontSize: '1.0rem', color: '#4f4f4f' }} // Set font color to #4f4f4f
-    >
-      {report.ReportName}
-    </ListGroup.Item>
-  ))}
-</ListGroup>
+      {reports.map((report) => (
+        <ListGroup.Item
+          key={report.ReportId}
+          action
+          onClick={() => handleReportClick(report)}
+          className="py-3"
+          style={{ fontSize: '1.0rem', color: '#4f4f4f' }}
+        >
+          <span
+            style={{
+              fontSize: '1.5rem',
+              marginRight: '10px',
+              color: '#ff5722', // Vibrant color (change as needed)
+            }}
+          >
+            {report.Icon}
+          </span>
+          {report.ReportName}
+        </ListGroup.Item>
+      ))}
+    </ListGroup>
 
   </Card.Body>
 </Card>
