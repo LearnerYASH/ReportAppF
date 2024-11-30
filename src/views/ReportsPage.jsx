@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ListGroup, Modal, Form, Button, Card } from 'react-bootstrap';
+import { ListGroup, Modal, Form, Button, Card, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import api from './api';
-import { FaChartLine, FaCashRegister, FaStore, FaUsers, FaTags, FaUserTie, FaTruck, FaShoppingCart, FaChartPie, FaFileAlt } from 'react-icons/fa';
+import './ReportsPage.css'; // Add this for custom CSS animations
 
 const reportIcons = {
   'iNext-000000001': 'https://img.icons8.com/plasticine/100/total-sales.png', // Company Total Sale
-  'iNext-000000002': 'https://img.icons8.com/plasticine/100/combo-chart.png', // Sale Trend of Company (replace FaTrend)
+  'iNext-000000002': 'https://img.icons8.com/plasticine/100/combo-chart.png', // Sale Trend of Company
   'iNext-000000003': 'https://img.icons8.com/plasticine/100/atm.png', // Sale by Payment Mode
   'iNext-000000004': 'https://img.icons8.com/plasticine/100/line-chart.png', // Branch Sale
   'iNext-000000005': 'https://img.icons8.com/plasticine/100/commercial-development-management.png', // Total Customer Served
@@ -24,16 +24,21 @@ const ReportsPage = ({ reportGroup }) => {
   const [fromDate, setFromDate] = useState('2024-04-01');
   const [toDate, setToDate] = useState('2024-11-04');
   const [branchId, setBranchId] = useState('S01');
+  const [isLoading, setIsLoading] = useState(false); // For the loading state
+  const [isExecuting, setIsExecuting] = useState(false); // For executing report state
   const navigate = useNavigate();
 
   // Fetch reports for the group
   useEffect(() => {
     const fetchReports = async () => {
+      setIsLoading(true); // Set loading state to true when fetching reports
       try {
         const response = await api.get(`/reports/reports?group=${reportGroup}`);
         setReports(response.data);
       } catch (error) {
         console.error('Error fetching reports:', error);
+      } finally {
+        setIsLoading(false); // Set loading state to false after fetching
       }
     };
 
@@ -61,6 +66,8 @@ const ReportsPage = ({ reportGroup }) => {
       clientDbName: localStorage.getItem('clientDbName'),
     };
 
+    setIsExecuting(true); // Start the execution process
+
     try {
       const response = await api.post('/reports/execute', {
         procedureName: selectedReport.ProcedureName,
@@ -79,56 +86,69 @@ const ReportsPage = ({ reportGroup }) => {
       console.error('Error executing report:', error);
     }
 
+    setIsExecuting(false); // Stop the execution process
     setShowModal(false); // Close the modal
   };
 
   return (
     <div>
-      <Card className="shadow-sm w-100">
-        <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
+      
+        {/* <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
           <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '1.2rem' }}>
             Point Of Sale Reports
           </Card.Title>
-        </Card.Header>
-        <Card.Body className="d-flex flex-column h-100 p-0">
-          <ListGroup className="h-100">
-            {reports.map((report) => {
-              const IconComponent = reportIcons[report.ReportId] || FaFileAlt; // Default icon if not matched
+        </Card.Header> */}
+       
+       <ListGroup className="h-100 fade-in">
+  {isLoading ? (
+    <div className="d-flex justify-content-center align-items-center py-5">
+      <Spinner animation="border" variant="primary" />
+    </div>
+  ) : (
+    reports.map((report) => {
+      const IconComponent = reportIcons[report.ReportId] || 'fa fa-file'; // Default icon if not matched
 
-              return (
-                <ListGroup.Item
-                  key={report.ReportId}
-                  action
-                  onClick={() => handleReportClick(report)}
-                  className="d-flex align-items-center py-3"
-                  style={{ fontSize: '1rem', color: '#4f4f4f' }}
-                >
-                  {/* Icon */}
-                  <span
-                    style={{
-                      fontSize: '1.5rem',
-                      marginRight: '15px',
-                      color: '#ff5722', // Vibrant color for the icon
-                    }}
-                  >
-                    {/* Render either image URL or React component */}
-                    {typeof IconComponent === 'string' ? (
-                      <img src={IconComponent} alt="report-icon" width="35" height="35" />
-                    ) : (
-                      <IconComponent />
-                    )}
-                  </span>
-                  {/* Report Name */}
-                  <span>{report.ReportName}</span>
-                </ListGroup.Item>
-              );
-            })}
-          </ListGroup>
-        </Card.Body>
-      </Card>
+      return (
+        <ListGroup.Item
+          key={report.ReportId}
+          action
+          onClick={() => handleReportClick(report)}
+          className="d-flex align-items-center py-3"
+          style={{
+            fontSize: '1rem',
+            color: '#003366', // Font color white
+            backgroundColor: '#c3e2f3', // Background color
+            borderRadius: '10px', // Border radius for curved corners
+            marginBottom: '10px', // Optional: to add space between items
+          }}
+        >
+          {/* Icon */}
+          <span
+            style={{
+              fontSize: '1.5rem',
+              marginRight: '15px',
+              color: '#ff5722', // Vibrant color for the icon
+            }}
+          >
+            {typeof IconComponent === 'string' ? (
+              <img src={IconComponent} alt="report-icon" width="35" height="35" />
+            ) : (
+              <i className={IconComponent}></i>
+            )}
+          </span>
+          {/* Report Name */}
+          <span>{report.ReportName}</span>
+        </ListGroup.Item>
+      );
+    })
+  )}
+</ListGroup>
+
+        
+      
 
       {/* Modal for input parameters */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal show={showModal} onHide={() => setShowModal(false)} className="animate-modal">
         <Modal.Header closeButton>
           <Modal.Title>Execute {selectedReport?.ReportName}</Modal.Title>
         </Modal.Header>
@@ -164,8 +184,17 @@ const ReportsPage = ({ reportGroup }) => {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleExecuteReport}>
-            Execute Report
+          <Button
+            variant="primary"
+            onClick={handleExecuteReport}
+            disabled={isExecuting}
+            className={isExecuting ? 'loading' : ''}
+          >
+            {isExecuting ? (
+              <Spinner animation="border" className="small-spinner"/> // Show spinner during execution
+            ) : (
+              'Execute Report'
+            )}
           </Button>
         </Modal.Footer>
       </Modal>

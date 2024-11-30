@@ -6157,6 +6157,7 @@ __metadata:
     react-error-overlay: "npm:6.0.11"
     react-google-charts: "npm:^4.0.1"
     react-icons: "npm:^5.3.0"
+    react-loading-indicators: "npm:^1.0.0"
     react-perfect-scrollbar: "npm:^1.5.8"
     react-router-dom: "npm:^6.22.3"
     react-select: "npm:^5.8.3"
@@ -7632,6 +7633,16 @@ __metadata:
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
   checksum: 10c0/1d0df3c85af79df720524780f00c064d53a9dd1899d785eddb7264b378026979acbddb58a4b7e06e7d0d12aa1494fd5754562ee55d32907b15601068dae82c27
+  languageName: node
+  linkType: hard
+
+"react-loading-indicators@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-loading-indicators@npm:1.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/1c7c5d4677a14e00777947321e102cf0a4684ed23813720159c7221e5c5d29f60e4fd3c033254aa2553c57446b74548db7318579fbb4a3aa0a7efcb5e3364be6
   languageName: node
   linkType: hard
 

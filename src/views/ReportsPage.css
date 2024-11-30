@@ -1,0 +1,48 @@
+/* For fade-in effect of the report list */
+.fade-in {
+    animation: fadeIn 1s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* For modal animations */
+  .animate-modal {
+    animation: modalSlideIn 0.3s ease-out;
+  }
+  
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Spinner style for better visibility */
+  .spinner-border {
+    border-width: 4px;
+    width: 2rem;
+    height: 2rem;
+  }
+  /* Add this to your ReportsPage.css */
+button.loading {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  .small-spinner {
+    width: 1.3rem;   /* Adjust width */
+    height: 1.3rem;  /* Adjust height */
+    margin: 0 auto; /* Center spinner inside button */
+  }
+  
+  
