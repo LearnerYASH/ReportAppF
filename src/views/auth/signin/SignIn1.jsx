@@ -105,7 +105,7 @@ const Signin1 = () => {
         <div className="col-lg-6 mb-5 mb-lg-0" style={{ zIndex: 10 }}>
           <h1 className="my-5 display-5 fw-bold ls-tight" style={{ color: 'hsl(218, 81%, 95%)' }}>
             Welcome to <br />
-            <span style={{ color: 'hsl(218, 81%, 75%)' }}>iNextErp solutions</span>
+            <span style={{ color: '#6495ed' }}>iNextErp solutions</span>
           </h1>
           <p className="mb-4 opacity-70" style={{ color:  'hsl(218, 81%, 95%)' }}>
             "Empowering Businesses through Innovative and Integrated ERP, CRM, and POS Solutions that Drive Efficiency, Enhance Customer Engagement, and Foster Sustainable Growth in a Dynamic Market."
@@ -117,7 +117,13 @@ const Signin1 = () => {
           <div id="radius-shape-2" className="position-absolute shadow-5-strong"></div>
 
           <div className="card bg-glass">
-            <Card.Body>
+            <Card.Body style={{
+    minHeight: '400px', // Set the desired height
+    display: 'flex', // Flexbox for alignment
+    flexDirection: 'column', // Column alignment
+    justifyContent: 'center', // Center vertically
+    // Center horizontally
+  }}>
               <div className="text-center mb-4">
                 <img src={logo} alt="Company Logo" style={{ width: '80px' }} />
                 <h3 className="mt-3" style={{ fontWeight: 'bold', fontFamily: 'Titillium Web, sans-serif', color: '#6495ed' }}>iNextErp</h3>
@@ -148,9 +154,7 @@ const Signin1 = () => {
     />
     {isSubmitting && (
         <div className="d-flex justify-content-center">
-            <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>
+            
         </div>
     )}
 </Form.Group>
@@ -168,15 +172,28 @@ const Signin1 = () => {
 
                 <div className="text-center text-lg-start mt-4 pt-2">
                 <Button
-    type="submit"
-    variant="primary"
-    size="lg"
-    className="px-5"
-    style={{ fontFamily: 'Titillium Web, sans-serif', backgroundColor: '#6495ed', borderColor: '#6495ed' }}
-    disabled={isSubmitting}  // Disable button while submitting
+  type="submit"
+  variant="primary"
+  size="lg"
+  className="px-5 d-flex align-items-center justify-content-center gap-2"
+  style={{
+    fontFamily: 'Titillium Web, sans-serif',
+    backgroundColor: '#6495ed',
+    borderColor: '#6495ed',
+  }}
+  disabled={isSubmitting} // Disable button while submitting
 >
-    {isSubmitting ? 'Logging in...' : 'Login'}
+  {isSubmitting && (
+    <div
+      className="spinner-border spinner-border-sm text-light"
+      role="status"
+    >
+      <span className="visually-hidden">Loading...</span>
+    </div>
+  )}
+  <span>{isSubmitting ? 'Logging in...' : 'Login'}</span>
 </Button>
+
 
                   <p className="small fw-bold mt-2 pt-1 mb-0">
                     Don’t have an account?{' '}
