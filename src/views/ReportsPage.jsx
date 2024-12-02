@@ -117,7 +117,7 @@ const ReportsPage = ({ reportGroup }) => {
           style={{
             fontSize: '1rem',
             color: '#003366', // Font color white
-            backgroundColor: '#c3e2f3', // Background color
+            backgroundColor: '#9ACEEB', // Background color
             borderRadius: '10px', // Border radius for curved corners
             marginBottom: '10px', // Optional: to add space between items
           }}
@@ -149,8 +149,8 @@ const ReportsPage = ({ reportGroup }) => {
 
       {/* Modal for input parameters */}
       <Modal show={showModal} onHide={() => setShowModal(false)} className="animate-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>Execute {selectedReport?.ReportName}</Modal.Title>
+        <Modal.Header closeButton style={{ backgroundColor: '#6495ed',color: '#003366' }}>
+          <Modal.Title>Filter For {selectedReport?.ReportName}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>

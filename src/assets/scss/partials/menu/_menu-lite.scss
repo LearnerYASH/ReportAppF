@@ -64,7 +64,7 @@
   padding: 0;
   position: relative;
   top: 0;
-  background: #9ACEEB;
+  background: #6495ed;
   color: $header-light-text-color;
   width: calc(100% - #{$Menu-width});
   margin-left: $Menu-width;
@@ -1046,7 +1046,7 @@
       &.active,
       &:focus,
       &:hover {
-        color: #1dc4e9;
+        color: white;
       }
 
       .pcoded-submenu > li {
@@ -1055,7 +1055,7 @@
         &:hover {
           > a {
             &:before {
-              background: #1dc4e9;
+              background: white;
             }
           }
         }
@@ -1067,7 +1067,7 @@
       &.pcoded-trigger {
         &:after {
           content: '';
-          background-color: #1dc4e9;
+          background-color: white;
           z-index: 1027;
           position: absolute;
           left: 0;
