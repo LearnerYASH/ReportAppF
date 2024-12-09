@@ -4,45 +4,59 @@ import { useLocation } from 'react-router-dom';
 import { Card, Col } from 'react-bootstrap'; // Using React-Bootstrap for card layout
 import BackButton from './BackButton';
 
-const CatagoryWiseSale = () => {
-  const location = useLocation(); // Access the location object
-  const { reportData } = location.state || {}; // Extract reportData from state
+const SaleByPaymentMode = ({ reportData }) => {
+  
 
+  // Handle no data scenario
   if (!reportData || reportData.length === 0) {
-    return <div>No data available for this report.</div>; // Handle no data scenario
+    return <div>No data available for this report.</div>;
   }
 
   // Prepare the data for the PieChart
-  const transformedData = reportData.map((item) => ({
-    id: item.ColLabel, // Use ColLabel as the label
-    label: item.ColLabel, // Use ColLabel for the legend and tooltip
-    value: item.ExtNetAmount, // Use ExtNetAmount as the value
-  }));
+  const paymentModes = [
+    { id: 'CashAmount', label: 'Cash Amount', value: 0 },
+    { id: 'ChqAmount', label: 'Cheque Amount', value: 0 },
+    { id: 'CreditAmount', label: 'Credit Amount', value: 0 },
+    { id: 'CreditCardAmount', label: 'Credit Card Amount', value: 0 },
+    { id: 'CreditNoteAdjAmount', label: 'Credit Note Adjustment', value: 0 },
+    { id: 'CreditNoteIsuAmount', label: 'Credit Note Issued', value: 0 },
+    { id: 'CreditRefundAmount', label: 'Credit Refund', value: 0 },
+    { id: 'DiscountCouponAmount', label: 'Discount Coupon', value: 0 },
+    { id: 'GiftVoucherAmount', label: 'Gift Voucher', value: 0 },
+  ];
 
-  // Filter out any entries with a value of 0 or invalid data
+  // Map data to match the structure of reportData
+  const transformedData = paymentModes.map((mode) => {
+    const matchingData = reportData.reduce(
+      (acc, item) => acc + (item[mode.id] || 0),
+      0
+    );
+    return { ...mode, value: matchingData };
+  });
+
+  // Filter out payment modes with a value of 0 for PieChart data
   const validData = transformedData.filter((entry) => entry.value > 0);
 
-  // Define a consistent color scheme
-  const colors = validData.map(
-    (_, index) => `hsl(${(index * 45) % 360}, 70%, 50%)` // Generate consistent colors
-  );
+  // Generate consistent colors for the PieChart and Legend
+  const colors = validData.map((_, index) => `hsl(${index * 45}, 70%, 50%)`);
 
   return (
     <div className="container">
       <Col sm="12">
         <Card className="h-100 shadow-sm">
           {/* Card Header */}
-          <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
-            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
-              <div
-                className="d-flex align-items-center"
-                style={{ gap: '0' }} // Add spacing between arrow and text
-              >
-                <BackButton />
-                <span>Category Wise Sales</span>
-              </div>
-            </Card.Title>
-          </Card.Header>
+          <Card.Header style={{ backgroundColor: '#6495ed' }}>
+  <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+    <div
+      className="d-flex align-items-center"
+      style={{ gap: '8px' }} // Add spacing between arrow and text
+    >
+      
+      <span>Sale By Payment Mode</span>
+    </div>
+  </Card.Title>
+</Card.Header>
+
 
           {/* Card Body */}
           <Card.Body>
@@ -53,7 +67,7 @@ const CatagoryWiseSale = () => {
                     data: validData.map(({ id, value }, index) => ({
                       id,
                       value,
-                      color: colors[index], // Use the predefined colors
+                      color: colors[index], // Assign color to each slice
                     })),
                     highlightScope: { fade: 'global', highlight: 'item' },
                     faded: {
@@ -62,8 +76,8 @@ const CatagoryWiseSale = () => {
                       color: 'gray',
                     },
                     tooltip: {
-                      valueFormatter: (value, { id }) =>
-                        `${id}: ₹${value.toLocaleString()}`, // Format tooltip value
+                      valueFormatter: (value, { label }) =>
+                        `${label}: ₹${value.toLocaleString()}`, // Format tooltip value with ₹
                     },
                   },
                 ]}
@@ -75,21 +89,19 @@ const CatagoryWiseSale = () => {
           {/* Card Footer for Custom Legend */}
           <Card.Footer>
             <div className="custom-legend">
-              {validData.map(({ label, value }, index) => (
+              {transformedData.map(({ label, value }, index) => (
                 <div key={index} className="legend-item">
                   <div className="legend-row">
                     <div
                       className="legend-color"
                       style={{
-                        backgroundColor: colors[index], // Match color with the PieChart
-                        width: '15px',
-                        height: '15px',
-                        borderRadius: '50%',
-                        marginRight: '8px',
+                        backgroundColor: colors[index],
                       }}
                     ></div>
                     <div className="legend-label">{label}</div>
-                    <div className="legend-value">₹{value.toLocaleString()}</div>
+                    <div className="legend-value">
+                      ₹{value.toLocaleString()} {/* Show 0 value */}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -146,4 +158,4 @@ const CatagoryWiseSale = () => {
   );
 };
 
-export default CatagoryWiseSale;
+export default SaleByPaymentMode;

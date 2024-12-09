@@ -1,68 +1,166 @@
-import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, Button, Modal, Form } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Modal, Form, Button, Spinner } from 'react-bootstrap';
+import api from '../api';
+import CompanyTotalSalesd from '../CompanyTotalSalesd';
+import SaleTrendd from '../SaleTrendd';
+import SaleByPaymentModed from '../SaleByPaymentModed';
+import SaleROIReportd from '../SaleROIReportd';
 
-const DashDefault = () => {
-  const [rowsData, setRowsData] = useState({
-    PointofSale: [2,2,3],
-    Inventory: [2,2,3],
-    Accounts: [2,3,3],
-    Production: [0,0,0]
-  });
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
 
-  // Fetch data for each row
-  useEffect(() => {
-    const fetchData = async () => {
-      // Example fetching logic, adjust with actual API routes
-      const posData = await fetch('/api/pointOfSale').then(res => res.json());
-      const invData = await fetch('/api/inventory').then(res => res.json());
-      const accData = await fetch('/api/accounts').then(res => res.json());
-      const prodData = await fetch('/api/production').then(res => res.json());
-      
-      setRowsData({ PointofSale: posData, Inventory: invData, Accounts: accData, Production: prodData });
+const Dashboard = () => {
+    const [fromDate, setFromDate] = useState('2024-04-01');
+    const [toDate, setToDate] = useState('2024-11-04');
+    const [branchId, setBranchId] = useState('S01');
+    const [showModal, setShowModal] = useState(true);
+    const [isExecuting, setIsExecuting] = useState(false);
+    const [dashboardData, setDashboardData] = useState(null);
+
+    const dbConfig = {
+        serverIp: localStorage.getItem('serverIp'),
+        sqlPort: localStorage.getItem('sqlPort'),
+        sqlUserId: localStorage.getItem('sqlUserId'),
+        sqlPwd: localStorage.getItem('sqlPwd'),
+        clientDbName: localStorage.getItem('clientDbName'),
     };
-    fetchData();
-  }, []);
 
-  const handleEditRowOrder = (row) => {
-    setSelectedRow(row);
-    setShowEditModal(true);
-  };
+    const reportsConfig = [
+        { reportId: 'iNext-000000001', procedureName: 'MprocTotalSale' },
+        { reportId: 'iNext-000000002', procedureName: 'MprocSaleTrendWeekly' },
+        { reportId: 'iNext-000000003', procedureName: 'MprocSalePaymentMode' },
+        { reportId: 'iNext-000000010', procedureName: 'MprocSaleROI' },
+    ];
 
-  const handleSaveEdit = () => {
-    // Implement order save logic here
-    setShowEditModal(false);
-  };
+    const handleExecuteReport = async () => {
+        setIsExecuting(true);
+        try {
+            const response = await api.post('/reports/executebatch', {
+                reports: reportsConfig.map((report) => ({
+                    ...report,
+                    fromDate,
+                    toDate,
+                    branchId,
+                })),
+                dbConfig,
+            });
+            console.log('Received data from backend:', response.data);
+            setDashboardData(response.data);
+            setShowModal(false); // Close modal after execution
+        } catch (error) {
+            console.error('Error executing batch reports:', error);
+        } finally {
+            setIsExecuting(false);
+        }
+    };
 
-  return (
-    <React.Fragment>
-      {Object.entries(rowsData).map(([rowName, rowData], rowIndex) => (
-        <Row key={rowIndex} className="mb-4">
-          <h5>{rowName.replace(/([A-Z])/g, ' $1').trim()}</h5>
-          {rowData.map((card, cardIndex) => (
-            <Col key={cardIndex} xl={4}>
-              <Card>
-                <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h6 className="mb-4">{card.title}</h6>
-                    <Button variant="link" onClick={() => handleEditRowOrder(rowName)}>
-                      Edit
+    const companyTotalSalesData = dashboardData ? dashboardData['iNext-000000001'] : null;
+    const saleTrendData = dashboardData ? dashboardData['iNext-000000002'] : null;
+    const saleByPaymentModeData = dashboardData ? dashboardData['iNext-000000003'] : null;
+    const saleroireportData = dashboardData ? dashboardData['iNext-000000010'] : null;
+
+    return (
+        <div>
+            {/* Modal for input parameters */}
+            <Modal
+                show={showModal}
+                onHide={() => setShowModal(false)}
+                backdrop="static"
+                keyboard={false}
+                className="animate-modal"
+            >
+                <Modal.Header closeButton style={{ backgroundColor: '#6495ed', color: '#003366' }}>
+                    <Modal.Title>Filter For Dashboard</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group controlId="fromDate">
+                            <Form.Label>From Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={fromDate}
+                                onChange={(e) => setFromDate(e.target.value)}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="toDate" className="mt-3">
+                            <Form.Label>To Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={toDate}
+                                onChange={(e) => setToDate(e.target.value)}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="branchId" className="mt-3">
+                            <Form.Label>Branch ID</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={branchId}
+                                onChange={(e) => setBranchId(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Close
                     </Button>
-                  </div>
-                  {/* Display card data */}
-                  <h3>{card.amount}</h3>
-                  <p>Additional card data...</p>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      ))}
+                    <Button
+                        variant="primary"
+                        onClick={handleExecuteReport}
+                        disabled={isExecuting}
+                        className={isExecuting ? 'loading' : ''}
+                    >
+                        {isExecuting ? <Spinner animation="border" className="small-spinner" /> : 'Execute Report'}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
-      
-    </React.Fragment>
-  );
+            {/* Render dashboard content */}
+            {dashboardData ? (
+    <div >
+    <div className="row  g-2">
+        {/* Total Sales */}
+        <div className="col-md-6 mb-4">
+            {companyTotalSalesData && companyTotalSalesData.length > 0 ? (
+                <CompanyTotalSalesd reportData={companyTotalSalesData} />
+            ) : (
+                <p>No data available for Total Sales.</p>
+            )}
+        </div>
+
+        {/* ROI Report */}
+        <div className="col-md-6 mb-4">
+            {saleroireportData && saleroireportData.length > 0 ? (
+                <SaleROIReportd reportData={saleroireportData} />
+            ) : (
+                <p>No data available for ROI Report.</p>
+            )}
+        </div>
+    </div>
+
+    <div className="row">
+        {/* Sale Trend */}
+        <div className="col-md-6 mb-4">
+            {saleTrendData && saleTrendData.length > 0 ? (
+                <SaleTrendd reportData={saleTrendData} />
+            ) : (
+                <p>No data available for Sale Trend.</p>
+            )}
+        </div>
+
+        {/* Sale by Payment Mode */}
+        <div className="col-md-6 mb-4">
+            {saleByPaymentModeData && saleByPaymentModeData.length > 0 ? (
+                <SaleByPaymentModed reportData={saleByPaymentModeData} />
+            ) : (
+                <p>No data available for Sale by Payment Mode.</p>
+            )}
+        </div>
+    </div>
+</div>
+) : (
+    <p>Loading dashboard data...</p>
+)}
+        </div>
+    );
 };
 
-export default DashDefault;
+export default Dashboard;

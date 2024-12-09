@@ -22,7 +22,7 @@ const NavLogo = () => {
         <div className="b">
          <img src={favicon} alt="logo" style={{ width: '35px', height: '35px' }} /> 
           </div>
-          <span className="b-title" style={{ fontFamily: 'Titillium Web, sans-serif', fontWeight: 'bold', color: '#00008b', fontSize: '1.8rem' }}>iNextErp</span>
+          <span className="b-title" style={{ fontFamily: 'Titillium Web, sans-serif', fontWeight: 'bold', color: 'white', fontSize: '1.8rem' }}>iNextErp</span>
         </Link>
         <Link to="#" className={toggleClass.join(' ')} id="mobile-collapse" onClick={() => dispatch({ type: actionType.COLLAPSE_MENU })}>
           <span />

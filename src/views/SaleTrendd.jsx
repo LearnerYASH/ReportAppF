@@ -12,9 +12,8 @@ import { useLocation } from 'react-router-dom';
 import { Card, Col } from 'react-bootstrap'; // Bootstrap for layout
 import BackButton from './BackButton'; // Assuming BackButton is in the same folder
 
-const SaleTrend = () => {
-  const location = useLocation();
-  const { reportData } = location.state || {};
+const SaleTrend = ({ reportData }) => {
+ 
 
   if (!reportData || reportData.length === 0) {
     return <div>No data available for this report.</div>;
@@ -57,13 +56,13 @@ const SaleTrend = () => {
       <Col sm="12">
         <Card className="h-100 shadow-sm">
           {/* Card Header */}
-          <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
+          <Card.Header style={{ backgroundColor: '#6495ed' }}>
             <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
               <div
                 className="d-flex align-items-center"
                 style={{ gap: '8px' }} // Add spacing between arrow and text
               >
-                <BackButton />
+                
                 <span>Sale Trend</span>
               </div>
             </Card.Title>

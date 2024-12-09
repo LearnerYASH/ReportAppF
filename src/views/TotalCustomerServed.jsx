@@ -33,10 +33,16 @@ const TotalCustomerServed = () => {
         <Card className="h-100 shadow-sm">
           {/* Card Header */}
           <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
-  <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-    Total Customers Served
-  </Card.Title>
-</Card.Header>
+            <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
+              <div
+                className="d-flex align-items-center"
+                style={{ gap: '0' }} // Add spacing between arrow and text
+              >
+                <BackButton />
+                <span>Total Customer Served</span>
+              </div>
+            </Card.Title>
+          </Card.Header>
 
 
           {/* Card Body */}

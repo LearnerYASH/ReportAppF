@@ -27,7 +27,7 @@ const BranchSale = () => {
         <Col sm="12">
           <Card className="h-100 shadow-sm">
             {/* Card Header */}
-            <Card.Header>
+            <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
             <Card.Title as="h5" style={{ color: '#4f4f4f' }}>
               <div
                 className="d-flex align-items-center"
