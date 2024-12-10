@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ListGroup, Modal, Form, Button, Card, Spinner } from 'react-bootstrap';
+import { ListGroup, Modal, Form, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import api from './api';
-import './ReportsPage.css'; // Add this for custom CSS animations
+import './ReportsPage.css';
 
 const reportIcons = {
   'iNext-000000001': 'https://img.icons8.com/plasticine/100/total-sales.png', // Company Total Sale
@@ -19,32 +19,53 @@ const reportIcons = {
 
 const ReportsPage = ({ reportGroup }) => {
   const [reports, setReports] = useState([]);
+  const [branches, setBranches] = useState([]); // Store branches fetched from the backend
+  const [selectedBranchId, setSelectedBranchId] = useState(''); // Store selected branch ID
   const [showModal, setShowModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
-  const [fromDate, setFromDate] = useState(() => new Date().toISOString().split('T')[0]); // Default to today's date
-  const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0]); // Default to today's date
-  const [isLoading, setIsLoading] = useState(false); // For the loading state
-  const [isExecuting, setIsExecuting] = useState(false); // For executing report state
+  const [fromDate, setFromDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
   const navigate = useNavigate();
 
-  const branchId = localStorage.getItem('BranchId'); // Fetch branchId directly from localStorage
-
-  // Fetch reports for the group
+  // Fetch reports for the specified group
   useEffect(() => {
     const fetchReports = async () => {
-      setIsLoading(true); // Set loading state to true when fetching reports
+      setIsLoading(true);
       try {
         const response = await api.get(`/reports/reports?group=${reportGroup}`);
         setReports(response.data);
       } catch (error) {
         console.error('Error fetching reports:', error);
       } finally {
-        setIsLoading(false); // Set loading state to false after fetching
+        setIsLoading(false);
+      }
+    };
+    fetchReports();
+  }, [reportGroup]);
+
+  // Fetch branches from the backend
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const dbConfig = {
+          serverIp: localStorage.getItem('serverIp'),
+          sqlPort: localStorage.getItem('sqlPort'),
+          sqlUserId: localStorage.getItem('sqlUserId'),
+          sqlPwd: localStorage.getItem('sqlPwd'),
+          clientDbName: localStorage.getItem('clientDbName'),
+        };
+
+        const response = await api.post('/reports/getBranches', { dbConfig });
+        setBranches(response.data);
+      } catch (error) {
+        console.error('Error fetching branches:', error);
       }
     };
 
-    fetchReports();
-  }, [reportGroup]);
+    fetchBranches();
+  }, []);
 
   // Handle report selection and modal display
   const handleReportClick = (report) => {
@@ -52,10 +73,10 @@ const ReportsPage = ({ reportGroup }) => {
     setShowModal(true);
   };
 
-  // Execute the report and navigate to its page
+  // Execute the selected report
   const handleExecuteReport = async () => {
-    if (!fromDate || !toDate) {
-      alert('Please fill in all fields.');
+    if (!fromDate || !toDate || !selectedBranchId) {
+      alert('Please select a branch and fill in all fields.');
       return;
     }
 
@@ -65,10 +86,9 @@ const ReportsPage = ({ reportGroup }) => {
       sqlUserId: localStorage.getItem('sqlUserId'),
       sqlPwd: localStorage.getItem('sqlPwd'),
       clientDbName: localStorage.getItem('clientDbName'),
-      BranchId: branchId, // No need to ask the user for branchId
     };
 
-    setIsExecuting(true); // Start the execution process
+    setIsExecuting(true);
 
     try {
       const response = await api.post('/reports/execute', {
@@ -76,20 +96,19 @@ const ReportsPage = ({ reportGroup }) => {
         reportId: selectedReport.ReportId,
         fromDate,
         toDate,
-        branchId, // Send branchId from localStorage
+        branchId: selectedBranchId, // Use selected branch ID
         dbConfig,
       });
 
-      // Navigate to the report-specific component with data
       navigate(`/${selectedReport.ReportName.slice(3).trim().replace(/\s+/g, '')}`, {
         state: { reportData: response.data },
       });
     } catch (error) {
       console.error('Error executing report:', error);
+    } finally {
+      setIsExecuting(false);
+      setShowModal(false);
     }
-
-    setIsExecuting(false); // Stop the execution process
-    setShowModal(false); // Close the modal
   };
 
   return (
@@ -100,67 +119,58 @@ const ReportsPage = ({ reportGroup }) => {
             <Spinner animation="border" variant="primary" />
           </div>
         ) : (
-          reports.map((report) => {
-            const IconComponent = reportIcons[report.ReportId] || 'fa fa-file'; // Default icon if not matched
-
-            return (
-              <ListGroup.Item
-                key={report.ReportId}
-                action
-                onClick={() => handleReportClick(report)}
-                className="d-flex align-items-center py-3"
-                style={{
-                  fontSize: '1rem',
-                  color: '#003366', // Font color white
-                  backgroundColor: '#9ACEEB', // Background color
-                  borderRadius: '10px', // Border radius for curved corners
-                  marginBottom: '10px', // Optional: to add space between items
-                }}
-              >
-                {/* Icon */}
-                <span
-                  style={{
-                    fontSize: '1.5rem',
-                    marginRight: '15px',
-                    color: '#ff5722', // Vibrant color for the icon
-                  }}
-                >
-                  {typeof IconComponent === 'string' ? (
-                    <img src={IconComponent} alt="report-icon" width="35" height="35" />
-                  ) : (
-                    <i className={IconComponent}></i>
-                  )}
-                </span>
-                {/* Report Name */}
-                <span>{report.ReportName}</span>
-              </ListGroup.Item>
-            );
-          })
+          reports.map((report) => (
+            <ListGroup.Item
+              key={report.ReportId}
+              action
+              onClick={() => handleReportClick(report)}
+              className="d-flex align-items-center py-3"
+              style={{
+                fontSize: '1rem',
+                color: '#003366', // Font color white
+                backgroundColor: '#9ACEEB', // Background color
+                borderRadius: '10px', // Border radius for curved corners
+                marginBottom: '10px', // Optional: to add space between items
+              }}
+            >
+              <span style={{ fontSize: '1.5rem', marginRight: '15px' }}>
+                <img src={reportIcons[report.ReportId] || 'https://img.icons8.com/plasticine/100/default.png'} alt="icon" width="35" height="35" />
+              </span>
+              <span>{report.ReportName}</span>
+            </ListGroup.Item>
+          ))
         )}
       </ListGroup>
 
       {/* Modal for input parameters */}
       <Modal show={showModal} onHide={() => setShowModal(false)} className="animate-modal">
-        <Modal.Header closeButton style={{ backgroundColor: '#6495ed', color: '#003366' }}>
+        <Modal.Header closeButton>
           <Modal.Title>Filter For {selectedReport?.ReportName}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="fromDate">
-              <Form.Label>From Date</Form.Label>
+            <Form.Group controlId="branchSelect">
+              <Form.Label>Select Branch</Form.Label>
               <Form.Control
-                type="date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-              />
+                as="select"
+                value={selectedBranchId}
+                onChange={(e) => setSelectedBranchId(e.target.value)}
+              >
+                <option value="">Select Branch</option>
+                {branches.map((branch) => (
+                  <option key={branch.branchId} value={branch.branchId}>
+                    {branch.branchName}  {branch.branchId}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="fromDate" className="mt-3">
+              <Form.Label>From Date</Form.Label>
+              <Form.Control type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
             </Form.Group>
             <Form.Group controlId="toDate" className="mt-3">
               <Form.Label>To Date</Form.Label>
-              <Form.Control
-                type="date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-              />
+              <Form.Control type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -168,17 +178,8 @@ const ReportsPage = ({ reportGroup }) => {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
-          <Button
-            variant="primary"
-            onClick={handleExecuteReport}
-            disabled={isExecuting}
-            className={isExecuting ? 'loading' : ''}
-          >
-            {isExecuting ? (
-              <Spinner animation="border" className="small-spinner" /> // Show spinner during execution
-            ) : (
-              'Execute Report'
-            )}
+          <Button variant="primary" onClick={handleExecuteReport} disabled={isExecuting}>
+            {isExecuting ? <Spinner animation="border" size="sm" /> : 'Execute Report'}
           </Button>
         </Modal.Footer>
       </Modal>
