@@ -159,7 +159,7 @@ const ReportsPage = ({ reportGroup }) => {
                 <option value="">Select Branch</option>
                 {branches.map((branch) => (
                   <option key={branch.branchId} value={branch.branchId}>
-                    {branch.branchName}  {branch.branchId}
+                   {branch.branchId} {branch.branchName}
                   </option>
                 ))}
               </Form.Control>
