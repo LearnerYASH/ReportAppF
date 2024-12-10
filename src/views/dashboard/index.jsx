@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { Modal, Form, Button, Spinner } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Spinner } from 'react-bootstrap';
 import api from '../api';
 import CompanyTotalSalesd from '../CompanyTotalSalesd';
 import SaleTrendd from '../SaleTrendd';
 import SaleByPaymentModed from '../SaleByPaymentModed';
 import SaleROIReportd from '../SaleROIReportd';
 
-
 const Dashboard = () => {
-    const [fromDate, setFromDate] = useState('2024-04-01');
-    const [toDate, setToDate] = useState('2024-11-04');
-    const [branchId, setBranchId] = useState('S01');
-    const [showModal, setShowModal] = useState(true);
-    const [isExecuting, setIsExecuting] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Retrieve branchId from localStorage
+    const branchId = localStorage.getItem('BranchId');
+
+    // Get the current date and format it as "YYYY-MM-DD"
+    const getCurrentDate = () => new Date().toISOString().split('T')[0];
 
     const dbConfig = {
         serverIp: localStorage.getItem('serverIp'),
@@ -30,8 +31,11 @@ const Dashboard = () => {
         { reportId: 'iNext-000000010', procedureName: 'MprocSaleROI' },
     ];
 
-    const handleExecuteReport = async () => {
-        setIsExecuting(true);
+    const fetchDashboardData = async () => {
+        setIsLoading(true);
+        const fromDate = getCurrentDate(); // Adjust the start date as required
+        const toDate = getCurrentDate(); // Use today's date as the end date
+
         try {
             const response = await api.post('/reports/executebatch', {
                 reports: reportsConfig.map((report) => ({
@@ -44,13 +48,20 @@ const Dashboard = () => {
             });
             console.log('Received data from backend:', response.data);
             setDashboardData(response.data);
-            setShowModal(false); // Close modal after execution
         } catch (error) {
-            console.error('Error executing batch reports:', error);
+            console.error('Error fetching dashboard data:', error);
         } finally {
-            setIsExecuting(false);
+            setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (branchId) {
+            fetchDashboardData();
+        } else {
+            console.error('Branch ID is missing in localStorage');
+        }
+    }, [branchId]);
 
     const companyTotalSalesData = dashboardData ? dashboardData['iNext-000000001'] : null;
     const saleTrendData = dashboardData ? dashboardData['iNext-000000002'] : null;
@@ -59,106 +70,53 @@ const Dashboard = () => {
 
     return (
         <div>
-            {/* Modal for input parameters */}
-            <Modal
-                show={showModal}
-                onHide={() => setShowModal(false)}
-                backdrop="static"
-                keyboard={false}
-                className="animate-modal"
-            >
-                <Modal.Header closeButton style={{ backgroundColor: '#6495ed', color: '#003366' }}>
-                    <Modal.Title>Filter For Dashboard</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group controlId="fromDate">
-                            <Form.Label>From Date</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={fromDate}
-                                onChange={(e) => setFromDate(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="toDate" className="mt-3">
-                            <Form.Label>To Date</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={toDate}
-                                onChange={(e) => setToDate(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="branchId" className="mt-3">
-                            <Form.Label>Branch ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={branchId}
-                                onChange={(e) => setBranchId(e.target.value)}
-                            />
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>
-                        Close
-                    </Button>
-                    <Button
-                        variant="primary"
-                        onClick={handleExecuteReport}
-                        disabled={isExecuting}
-                        className={isExecuting ? 'loading' : ''}
-                    >
-                        {isExecuting ? <Spinner animation="border" className="small-spinner" /> : 'Execute Report'}
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {isLoading ? (
+                <Spinner animation="border" className="loading-spinner" />
+            ) : dashboardData ? (
+                <div>
+                    <div className="row g-2">
+                        {/* Total Sales */}
+                        <div className="col-md-6 mb-4">
+                            {companyTotalSalesData && companyTotalSalesData.length > 0 ? (
+                                <CompanyTotalSalesd reportData={companyTotalSalesData} />
+                            ) : (
+                                <p>No data available for Total Sales.</p>
+                            )}
+                        </div>
 
-            {/* Render dashboard content */}
-            {dashboardData ? (
-    <div >
-    <div className="row  g-2">
-        {/* Total Sales */}
-        <div className="col-md-6 mb-4">
-            {companyTotalSalesData && companyTotalSalesData.length > 0 ? (
-                <CompanyTotalSalesd reportData={companyTotalSalesData} />
-            ) : (
-                <p>No data available for Total Sales.</p>
-            )}
-        </div>
+                        {/* ROI Report */}
+                        <div className="col-md-6 mb-4">
+                            {saleroireportData && saleroireportData.length > 0 ? (
+                                <SaleROIReportd reportData={saleroireportData} />
+                            ) : (
+                                <p>No data available for ROI Report.</p>
+                            )}
+                        </div>
+                    </div>
 
-        {/* ROI Report */}
-        <div className="col-md-6 mb-4">
-            {saleroireportData && saleroireportData.length > 0 ? (
-                <SaleROIReportd reportData={saleroireportData} />
-            ) : (
-                <p>No data available for ROI Report.</p>
-            )}
-        </div>
-    </div>
+                    <div className="row">
+                        {/* Sale Trend */}
+                        <div className="col-md-6 mb-4">
+                            {saleTrendData && saleTrendData.length > 0 ? (
+                                <SaleTrendd reportData={saleTrendData} />
+                            ) : (
+                                <p>No data available for Sale Trend.</p>
+                            )}
+                        </div>
 
-    <div className="row">
-        {/* Sale Trend */}
-        <div className="col-md-6 mb-4">
-            {saleTrendData && saleTrendData.length > 0 ? (
-                <SaleTrendd reportData={saleTrendData} />
+                        {/* Sale by Payment Mode */}
+                        <div className="col-md-6 mb-4">
+                            {saleByPaymentModeData && saleByPaymentModeData.length > 0 ? (
+                                <SaleByPaymentModed reportData={saleByPaymentModeData} />
+                            ) : (
+                                <p>No data available for Sale by Payment Mode.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
             ) : (
-                <p>No data available for Sale Trend.</p>
+                <p>No data available or branch ID is missing.</p>
             )}
-        </div>
-
-        {/* Sale by Payment Mode */}
-        <div className="col-md-6 mb-4">
-            {saleByPaymentModeData && saleByPaymentModeData.length > 0 ? (
-                <SaleByPaymentModed reportData={saleByPaymentModeData} />
-            ) : (
-                <p>No data available for Sale by Payment Mode.</p>
-            )}
-        </div>
-    </div>
-</div>
-) : (
-    <p>Loading dashboard data...</p>
-)}
         </div>
     );
 };

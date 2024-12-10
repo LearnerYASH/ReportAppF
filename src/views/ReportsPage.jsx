@@ -21,12 +21,13 @@ const ReportsPage = ({ reportGroup }) => {
   const [reports, setReports] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
-  const [fromDate, setFromDate] = useState('2024-04-01');
-  const [toDate, setToDate] = useState('2024-11-04');
-  const [branchId, setBranchId] = useState('S01');
+  const [fromDate, setFromDate] = useState(() => new Date().toISOString().split('T')[0]); // Default to today's date
+  const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0]); // Default to today's date
   const [isLoading, setIsLoading] = useState(false); // For the loading state
   const [isExecuting, setIsExecuting] = useState(false); // For executing report state
   const navigate = useNavigate();
+
+  const branchId = localStorage.getItem('BranchId'); // Fetch branchId directly from localStorage
 
   // Fetch reports for the group
   useEffect(() => {
@@ -53,7 +54,7 @@ const ReportsPage = ({ reportGroup }) => {
 
   // Execute the report and navigate to its page
   const handleExecuteReport = async () => {
-    if (!fromDate || !toDate || !branchId) {
+    if (!fromDate || !toDate) {
       alert('Please fill in all fields.');
       return;
     }
@@ -64,6 +65,7 @@ const ReportsPage = ({ reportGroup }) => {
       sqlUserId: localStorage.getItem('sqlUserId'),
       sqlPwd: localStorage.getItem('sqlPwd'),
       clientDbName: localStorage.getItem('clientDbName'),
+      BranchId: branchId, // No need to ask the user for branchId
     };
 
     setIsExecuting(true); // Start the execution process
@@ -74,7 +76,7 @@ const ReportsPage = ({ reportGroup }) => {
         reportId: selectedReport.ReportId,
         fromDate,
         toDate,
-        branchId,
+        branchId, // Send branchId from localStorage
         dbConfig,
       });
 
@@ -92,64 +94,54 @@ const ReportsPage = ({ reportGroup }) => {
 
   return (
     <div>
-      
-        {/* <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
-          <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '1.2rem' }}>
-            Point Of Sale Reports
-          </Card.Title>
-        </Card.Header> */}
-       
-       <ListGroup className="h-100 fade-in">
-  {isLoading ? (
-    <div className="d-flex justify-content-center align-items-center py-5">
-      <Spinner animation="border" variant="primary" />
-    </div>
-  ) : (
-    reports.map((report) => {
-      const IconComponent = reportIcons[report.ReportId] || 'fa fa-file'; // Default icon if not matched
+      <ListGroup className="h-100 fade-in">
+        {isLoading ? (
+          <div className="d-flex justify-content-center align-items-center py-5">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        ) : (
+          reports.map((report) => {
+            const IconComponent = reportIcons[report.ReportId] || 'fa fa-file'; // Default icon if not matched
 
-      return (
-        <ListGroup.Item
-          key={report.ReportId}
-          action
-          onClick={() => handleReportClick(report)}
-          className="d-flex align-items-center py-3"
-          style={{
-            fontSize: '1rem',
-            color: '#003366', // Font color white
-            backgroundColor: '#9ACEEB', // Background color
-            borderRadius: '10px', // Border radius for curved corners
-            marginBottom: '10px', // Optional: to add space between items
-          }}
-        >
-          {/* Icon */}
-          <span
-            style={{
-              fontSize: '1.5rem',
-              marginRight: '15px',
-              color: '#ff5722', // Vibrant color for the icon
-            }}
-          >
-            {typeof IconComponent === 'string' ? (
-              <img src={IconComponent} alt="report-icon" width="35" height="35" />
-            ) : (
-              <i className={IconComponent}></i>
-            )}
-          </span>
-          {/* Report Name */}
-          <span>{report.ReportName}</span>
-        </ListGroup.Item>
-      );
-    })
-  )}
-</ListGroup>
-
-        
-      
+            return (
+              <ListGroup.Item
+                key={report.ReportId}
+                action
+                onClick={() => handleReportClick(report)}
+                className="d-flex align-items-center py-3"
+                style={{
+                  fontSize: '1rem',
+                  color: '#003366', // Font color white
+                  backgroundColor: '#9ACEEB', // Background color
+                  borderRadius: '10px', // Border radius for curved corners
+                  marginBottom: '10px', // Optional: to add space between items
+                }}
+              >
+                {/* Icon */}
+                <span
+                  style={{
+                    fontSize: '1.5rem',
+                    marginRight: '15px',
+                    color: '#ff5722', // Vibrant color for the icon
+                  }}
+                >
+                  {typeof IconComponent === 'string' ? (
+                    <img src={IconComponent} alt="report-icon" width="35" height="35" />
+                  ) : (
+                    <i className={IconComponent}></i>
+                  )}
+                </span>
+                {/* Report Name */}
+                <span>{report.ReportName}</span>
+              </ListGroup.Item>
+            );
+          })
+        )}
+      </ListGroup>
 
       {/* Modal for input parameters */}
       <Modal show={showModal} onHide={() => setShowModal(false)} className="animate-modal">
-        <Modal.Header closeButton style={{ backgroundColor: '#6495ed',color: '#003366' }}>
+        <Modal.Header closeButton style={{ backgroundColor: '#6495ed', color: '#003366' }}>
           <Modal.Title>Filter For {selectedReport?.ReportName}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -170,14 +162,6 @@ const ReportsPage = ({ reportGroup }) => {
                 onChange={(e) => setToDate(e.target.value)}
               />
             </Form.Group>
-            <Form.Group controlId="branchId" className="mt-3">
-              <Form.Label>Branch ID</Form.Label>
-              <Form.Control
-                type="text"
-                value={branchId}
-                onChange={(e) => setBranchId(e.target.value)}
-              />
-            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -191,7 +175,7 @@ const ReportsPage = ({ reportGroup }) => {
             className={isExecuting ? 'loading' : ''}
           >
             {isExecuting ? (
-              <Spinner animation="border" className="small-spinner"/> // Show spinner during execution
+              <Spinner animation="border" className="small-spinner" /> // Show spinner during execution
             ) : (
               'Execute Report'
             )}

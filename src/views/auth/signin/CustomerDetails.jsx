@@ -34,6 +34,8 @@ const CustomerDetails = () => {
           localStorage.setItem('sqlUserId', productKey.SQLUserId);
           localStorage.setItem('sqlPwd', productKey.SQLPwd);
           localStorage.setItem('clientDbName', productKey.ClientDbName);
+          localStorage.setItem('BranchId', productKey.HoBranchId);
+          
         }
       } catch (error) {
         console.error('Error fetching product key:', error.message);
