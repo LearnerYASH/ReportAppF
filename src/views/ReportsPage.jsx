@@ -35,7 +35,7 @@ const ReportsPage = ({ reportGroup }) => {
       setIsLoading(true);
       try {
         const response = await api.get(`/reports/reports?group=${reportGroup}`);
-        setReports(response.data);
+        setReports(response?.data);
       } catch (error) {
         console.error('Error fetching reports:', error);
       } finally {
