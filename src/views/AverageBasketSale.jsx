@@ -18,12 +18,19 @@ const AverageBasketSale = () => {
         <Card className="shadow-sm">
           {/* Card Header */}
           <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
-  <Card.Title as="h5" style={{ display: 'flex', alignItems: 'center', color: '#FFFFFF', fontWeight: 'bold' }}>
-    <BackButton />
-    <span style={{ marginLeft: '8px' }}>Average Basket Sale</span>
-  </Card.Title>
-</Card.Header>
-
+            <Card.Title
+              as="h5"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                color: '#FFFFFF',
+                fontWeight: 'bold',
+              }}
+            >
+              <BackButton />
+              <span style={{ marginLeft: '8px' }}>Average Basket Sale</span>
+            </Card.Title>
+          </Card.Header>
 
           {/* Card Body */}
           <Card.Body>
@@ -39,18 +46,19 @@ const AverageBasketSale = () => {
                     }}
                   >
                     <Card.Body>
-                      <h5 style={{ color: '#fff', fontWeight: 'bold' }}>Average Basket Sale</h5>
+                      <h5 style={{ color: '#fff', fontWeight: 'bold' }}>
+                        {item.ColLabel || 'Average Basket Sale'}
+                      </h5>
                       <h2 style={{ fontSize: '2rem', color: '#fff' }}>
                         ₹ {item.BasketSize?.toFixed(2) || '0.00'} {/* Safely display BasketSize */}
                       </h2>
-                      <p
-                        style={{
-                          fontSize: '1.2rem',
-                          marginTop: '20px',
-                          textAlign: 'right', // Align additional details to the right
-                        }}
-                      >
-                        {/* Optional additional details (if needed) */}
+                      <p style={{ fontSize: '1rem', marginTop: '10px' }}>
+                        <strong>Total Sale: </strong>₹{' '}
+                        {item.TotalSale?.toFixed(2) || '0.00'}
+                      </p>
+                      <p style={{ fontSize: '1rem' }}>
+                        <strong>Total Cashmemo: </strong>₹{' '}
+                        {item.TotalCashmemo || '0.00'}
                       </p>
                     </Card.Body>
                   </Card>

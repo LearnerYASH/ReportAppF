@@ -44,6 +44,13 @@ const ReportsPage = ({ reportGroup }) => {
     };
     fetchReports();
   }, [reportGroup]);
+  useEffect(() => {
+    // Get the default branch ID from local storage
+    const defaultBranchId = localStorage.getItem('HoBranchId');
+    if (defaultBranchId) {
+      setSelectedBranchId(defaultBranchId);
+    }
+  }, []);
 
   // Fetch branches from the backend
   useEffect(() => {
@@ -149,28 +156,29 @@ const ReportsPage = ({ reportGroup }) => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="branchSelect">
-              <Form.Label>Select Branch</Form.Label>
-              <Form.Control
-                as="select"
-                value={selectedBranchId}
-                onChange={(e) => setSelectedBranchId(e.target.value)}
-              >
-                <option value="">Select Branch</option>
-                {branches.map((branch) => (
-                  <option key={branch.branchId} value={branch.branchId}>
-                   {branch.branchId} -- {branch.branchName}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
+          <Form.Group controlId="branchSelect">
+  <Form.Label>Select Branch</Form.Label>
+  <Form.Control
+    as="select"
+    value={selectedBranchId}
+    onChange={(e) => setSelectedBranchId(e.target.value)}
+    disabled={selectedReport?.ReportId === 'iNext-000000004'|| selectedReport?.ReportId === 'iNext-000000002'} // Disable for report ID iNext-000000004
+  >
+    <option value="">Select Branch</option>
+    {branches.map((branch) => (
+      <option key={branch.branchId} value={branch.branchId}>
+        {branch.branchId} -- {branch.branchName}
+      </option>
+    ))}
+  </Form.Control>
+</Form.Group>
             <Form.Group controlId="fromDate" className="mt-3">
               <Form.Label>From Date</Form.Label>
-              <Form.Control type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+              <Form.Control type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} disabled={selectedReport?.ReportId === 'iNext-000000002'}/>
             </Form.Group>
             <Form.Group controlId="toDate" className="mt-3">
               <Form.Label>To Date</Form.Label>
-              <Form.Control type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+              <Form.Control type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} disabled={selectedReport?.ReportId === 'iNext-000000002'} />
             </Form.Group>
           </Form>
         </Modal.Body>

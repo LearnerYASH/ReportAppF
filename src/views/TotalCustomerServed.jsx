@@ -12,20 +12,17 @@ const TotalCustomerServed = () => {
     return <div>No data available for this report.</div>; // Handle no data scenario
   }
 
-  // Prepare the data for the PieChart
-  const transformedData = reportData.map((item) => ({
-    id: item.ColLabel, // Use ColLabel as the label
-    label: item.ColLabel, // Use ColLabel for the legend and tooltip
-    value: item.CustomerServerd, // Use CustomerServerd as the value
-  }));
+  // Extract the single row of data
+  const { ColLabel, OldCustomerServerd, NewCustomerServerd } = reportData[0];
 
-  // Filter out any entries with a value of 0
-  const validData = transformedData.filter((entry) => entry.value > 0);
+  // Prepare the data for the PieChart
+  const validData = [
+    { id: 'Old Customers', label: 'Old Customers', value: OldCustomerServerd },
+    { id: 'New Customers', label: 'New Customers', value: NewCustomerServerd },
+  ].filter((entry) => entry.value > 0); // Filter out entries with 0 values
 
   // Define a consistent color scheme
-  const colors = validData.map(
-    (_, index) => `hsl(${(index * 45) % 360}, 70%, 50%)` // Generate consistent colors
-  );
+  const colors = ['#FF6384', '#36A2EB']; // Custom colors for the two categories
 
   return (
     <div className="container">
@@ -43,7 +40,6 @@ const TotalCustomerServed = () => {
               </div>
             </Card.Title>
           </Card.Header>
-
 
           {/* Card Body */}
           <Card.Body>

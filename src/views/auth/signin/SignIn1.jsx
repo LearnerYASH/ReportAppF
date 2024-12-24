@@ -25,11 +25,11 @@ const Signin1 = () => {
             localStorage.setItem('tokenExpiration', response.data.tokenExpiration);
             localStorage.setItem('UserName', response.data.UserName);
             localStorage.setItem('HoBranchId', response.data.HoBranchId);
-            localStorage.setItem('ServerIp', response.data.ServerIp);
-            localStorage.setItem('SqlPort', response.data.SqlPort);
-            localStorage.setItem('SQLUserId', response.data.SqlUserId);
-            localStorage.setItem('SQLPwd', response.data.SqlPwd);
-            localStorage.setItem('ClientDbName', response.data.ClientDbName);
+            localStorage.setItem('serverIp', response.data.ServerIp);
+            localStorage.setItem('sqlPort', response.data.SqlPort);
+            localStorage.setItem('sqlUserId', response.data.SQLUserId);
+            localStorage.setItem('sqlPwd', response.data.SQLPwd);
+            localStorage.setItem('clientDbName', response.data.ClientDbName);
             localStorage.setItem('CustomerName', response.data.CustomerName);
             localStorage.setItem('BusinessName', response.data.BusinessName);
             localStorage.setItem('ContactEmail1', response.data.ContactEmail1);

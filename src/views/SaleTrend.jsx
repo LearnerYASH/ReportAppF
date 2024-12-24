@@ -16,6 +16,9 @@ const SaleTrend = () => {
   const location = useLocation();
   const { reportData } = location.state || {};
 
+  // Log the reportData to inspect its structure
+  console.log('Report Data:', reportData);
+
   if (!reportData || reportData.length === 0) {
     return <div>No data available for this report.</div>;
   }
@@ -37,7 +40,7 @@ const SaleTrend = () => {
     // Fill missing days with default values (CTAmount: 0)
     return daysOfWeek.map((_, index) => ({
       CompareIndex: index,
-      CTAmount: filteredData[index]?.CTAmount || 0,
+      NetAmount: filteredData[index]?.NetAmount || 0,
     }));
   };
 
@@ -48,8 +51,8 @@ const SaleTrend = () => {
   // Prepare chart data
   const chartData = daysOfWeek.map((day, index) => ({
     day,
-    thisWeek: thisWeekData[index].CTAmount,
-    lastWeek: lastWeekData[index].CTAmount,
+    thisWeek: thisWeekData[index].NetAmount,
+    lastWeek: lastWeekData[index].NetAmount,
   }));
 
   return (

@@ -18,12 +18,19 @@ const SaleROIReport = () => {
         <Card className="shadow-sm">
           {/* Card Header */}
           <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
-  <Card.Title as="h5" style={{ display: 'flex', alignItems: 'center', color: '#FFFFFF', fontWeight: 'bold' }}>
-    <BackButton />
-    <span style={{ marginLeft: '8px' }}>Sale ROI Report</span>
-  </Card.Title>
-</Card.Header>
-
+            <Card.Title
+              as="h5"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                color: '#FFFFFF',
+                fontWeight: 'bold',
+              }}
+            >
+              <BackButton />
+              <span style={{ marginLeft: '8px' }}>Sale ROI Report</span>
+            </Card.Title>
+          </Card.Header>
 
           {/* Card Body */}
           <Card.Body>
@@ -39,18 +46,23 @@ const SaleROIReport = () => {
                     }}
                   >
                     <Card.Body>
-                      <h5 style={{ color: '#fff', fontWeight: 'bold' }}>ROI Sale Profit</h5>
+                      <h5 style={{ color: '#fff', fontWeight: 'bold' }}>
+                        {item.ColLabel || 'ROI Sale Profit'}
+                      </h5>
                       <h2 style={{ fontSize: '2rem', color: '#fff' }}>
                         ₹ {(item.Profit && !isNaN(item.Profit)) ? item.Profit.toFixed(2) : '0.00'}
                       </h2>
-                      <p
-                        style={{
-                          fontSize: '1.2rem',
-                          marginTop: '20px',
-                          textAlign: 'right', // Align additional details to the right (if needed)
-                        }}
-                      >
-                        {/* Optional additional details */}
+                      <p style={{ fontSize: '1rem', marginTop: '10px' }}>
+                        <strong>Sale: </strong>₹{' '}
+                        {(item.SaleValue && !isNaN(item.SaleValue))
+                          ? item.SaleValue.toFixed(2)
+                          : '0.00'}
+                      </p>
+                      <p style={{ fontSize: '1rem' }}>
+                        <strong>Cost: </strong>₹{' '}
+                        {(item.CostValue && !isNaN(item.CostValue))
+                          ? item.CostValue.toFixed(2)
+                          : '0.00'}
                       </p>
                     </Card.Body>
                   </Card>

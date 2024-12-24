@@ -1,19 +1,18 @@
 import React from 'react';
-import { PieChart } from '@mui/x-charts'; // Assuming @mui/x-charts is installed
+import { PieChart } from '@mui/x-charts';
 import { useLocation } from 'react-router-dom';
-import { Card, Col } from 'react-bootstrap'; // Using React-Bootstrap for card layout
+import { Card, Col } from 'react-bootstrap';
 import BackButton from './BackButton';
 
 const SaleByPaymentMode = () => {
-  const location = useLocation(); // Access the location object
-  const { reportData } = location.state || {}; // Extract reportData from state
+  const location = useLocation();
+  const { reportData } = location.state || {};
 
   // Handle no data scenario
   if (!reportData || reportData.length === 0) {
     return <div>No data available for this report.</div>;
   }
 
-  // Prepare the data for the PieChart
   const paymentModes = [
     { id: 'CashAmount', label: 'Cash Amount', value: 0 },
     { id: 'ChqAmount', label: 'Cheque Amount', value: 0 },
@@ -35,11 +34,8 @@ const SaleByPaymentMode = () => {
     return { ...mode, value: matchingData };
   });
 
-  // Filter out payment modes with a value of 0 for PieChart data
-  const validData = transformedData.filter((entry) => entry.value > 0);
-
-  // Generate consistent colors for the PieChart and Legend
-  const colors = validData.map((_, index) => `hsl(${index * 45}, 70%, 50%)`);
+  // No filtering here, show all payment modes, including those with 0 value
+  const colors = transformedData.map((_, index) => `hsl(${index * 45}, 70%, 50%)`);
 
   return (
     <div className="container">
@@ -47,17 +43,13 @@ const SaleByPaymentMode = () => {
         <Card className="h-100 shadow-sm">
           {/* Card Header */}
           <Card.Header style={{ backgroundColor: '#9ACEEB' }}>
-  <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-    <div
-      className="d-flex align-items-center"
-      style={{ gap: '8px' }} // Add spacing between arrow and text
-    >
-      <BackButton />
-      <span>Sale By Payment Mode</span>
-    </div>
-  </Card.Title>
-</Card.Header>
-
+            <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+              <div className="d-flex align-items-center" style={{ gap: '8px' }}>
+                <BackButton />
+                <span>Sale By Payment Mode</span>
+              </div>
+            </Card.Title>
+          </Card.Header>
 
           {/* Card Body */}
           <Card.Body>
@@ -65,7 +57,7 @@ const SaleByPaymentMode = () => {
               <PieChart
                 series={[
                   {
-                    data: validData.map(({ id, value }, index) => ({
+                    data: transformedData.map(({ id, value }, index) => ({
                       id,
                       value,
                       color: colors[index], // Assign color to each slice
@@ -82,7 +74,7 @@ const SaleByPaymentMode = () => {
                     },
                   },
                 ]}
-                height={300} // Adjust height for better visualization
+                height={300}
               />
             </div>
           </Card.Body>
@@ -117,7 +109,7 @@ const SaleByPaymentMode = () => {
           .custom-legend {
             display: flex;
             flex-direction: column;
-            gap: 8px; /* Spacing between items */
+            gap: 8px;
           }
 
           .legend-item {
@@ -145,7 +137,7 @@ const SaleByPaymentMode = () => {
           }
 
           .legend-label {
-            flex: 1; /* Pushes the value to the right */
+            flex: 1;
             text-align: left;
           }
 

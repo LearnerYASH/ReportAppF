@@ -1,11 +1,9 @@
 import React from 'react';
 import { PieChart } from '@mui/x-charts'; // Assuming @mui/x-charts is installed
-import { useLocation } from 'react-router-dom';
 import { Card, Col } from 'react-bootstrap'; // Using React-Bootstrap for card layout
 import BackButton from './BackButton';
 
 const SaleByPaymentMode = ({ reportData }) => {
-  
 
   // Handle no data scenario
   if (!reportData || reportData.length === 0) {
@@ -34,11 +32,8 @@ const SaleByPaymentMode = ({ reportData }) => {
     return { ...mode, value: matchingData };
   });
 
-  // Filter out payment modes with a value of 0 for PieChart data
-  const validData = transformedData.filter((entry) => entry.value > 0);
-
   // Generate consistent colors for the PieChart and Legend
-  const colors = validData.map((_, index) => `hsl(${index * 45}, 70%, 50%)`);
+  const colors = paymentModes.map((_, index) => `hsl(${index * 40}, 70%, 50%)`); // Ensure all modes get unique colors
 
   return (
     <div className="container">
@@ -46,17 +41,13 @@ const SaleByPaymentMode = ({ reportData }) => {
         <Card className="h-100 shadow-sm">
           {/* Card Header */}
           <Card.Header style={{ backgroundColor: '#6495ed' }}>
-  <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-    <div
-      className="d-flex align-items-center"
-      style={{ gap: '8px' }} // Add spacing between arrow and text
-    >
-      
-      <span>Sale By Payment Mode</span>
-    </div>
-  </Card.Title>
-</Card.Header>
-
+            <Card.Title as="h5" style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+              <div className="d-flex align-items-center" style={{ gap: '8px' }}>
+                <BackButton />
+                <span>Sale By Payment Mode</span>
+              </div>
+            </Card.Title>
+          </Card.Header>
 
           {/* Card Body */}
           <Card.Body>
@@ -64,7 +55,7 @@ const SaleByPaymentMode = ({ reportData }) => {
               <PieChart
                 series={[
                   {
-                    data: validData.map(({ id, value }, index) => ({
+                    data: transformedData.map(({ id, value }, index) => ({
                       id,
                       value,
                       color: colors[index], // Assign color to each slice
