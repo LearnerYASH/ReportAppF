@@ -23,9 +23,18 @@ const Signin1 = () => {
         if (response.data.success) {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('tokenExpiration', response.data.tokenExpiration);
-            localStorage.setItem('customerId', response.data.customerId);
             localStorage.setItem('UserName', response.data.UserName);
-            
+            localStorage.setItem('HoBranchId', response.data.HoBranchId);
+            localStorage.setItem('ServerIp', response.data.ServerIp);
+            localStorage.setItem('SqlPort', response.data.SqlPort);
+            localStorage.setItem('SQLUserId', response.data.SqlUserId);
+            localStorage.setItem('SQLPwd', response.data.SqlPwd);
+            localStorage.setItem('ClientDbName', response.data.ClientDbName);
+            localStorage.setItem('CustomerName', response.data.CustomerName);
+            localStorage.setItem('BusinessName', response.data.BusinessName);
+            localStorage.setItem('ContactEmail1', response.data.ContactEmail1);
+            localStorage.setItem('ContactPhone1', response.data.ContactPhone1);
+            localStorage.setItem('Address', response.data.Address);
             navigate('/verify');
         } else {
             setLoginError('Login failed. Please check your credentials.');
