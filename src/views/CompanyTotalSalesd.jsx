@@ -56,7 +56,7 @@ const CompanyTotalSalesd = ({ reportData }) => {
                   textShadow: '1px 1px 3px rgba(0,0,0,0.3)',
                 }}
               >
-                ₹ {item.ExtNetAmount.toFixed(0)}
+                ₹ {item.ExtNetAmount}
               </h2>
 
               {/* QTY Value */}

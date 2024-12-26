@@ -41,7 +41,7 @@ const CompanyTotalSales = () => {
                     <Card.Body>
                       <h5 style={{ color: '#fff', fontWeight: 'bold' }}>Total Sales</h5>
                       <h2 style={{ fontSize: '2rem', color: '#fff' }}>
-                        ₹ {item.ExtNetAmount.toFixed(2)}
+                        ₹ {item.ExtNetAmount}
                       </h2>
                       <p
                         style={{
